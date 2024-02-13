@@ -8,6 +8,7 @@ sudo dnf install -y \
     util-linux-user \
     anacron \
     cargo \
+    clementine \
     gnome-tweaks \
     gnome-extensions-app \
     neovim \

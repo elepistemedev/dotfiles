@@ -11,7 +11,6 @@ function ejecutar_bloque() {
     echo "Ejecución exitosa"
   else
     echo "**ERROR:** Falló la ejecución de '$script'"
-    ./logo.sh
     exit 1
   fi
 }
