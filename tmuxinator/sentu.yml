@@ -1,12 +1,20 @@
 # /home/el/.config/tmuxinator/sentu.yml
 
 name: sentu
-root: ~/sentu/tutos
-# on_project_start: sentu
- 
+root: ~/sentu/
+
+# on_project_start:
+on_project_exit: clear
 windows:
-  - server: clear && sentu 
-  - logs: 
-  - vim: vim
-  - database: 
-  - shell:
+  - server:
+      layout: main-horizontal #even-vertical
+      panes:
+        - frontend:
+          - clear
+        - backend:
+          - clear
+  - music: cmus
+  - logs:
+  - vim: clear
+  - db:
+  - shell: sleep 5; cmus-remote -p && clear
