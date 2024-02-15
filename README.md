@@ -1,10 +1,11 @@
-# dotfiles
+```
+█▀ █▀▀ █▄░█ ▀█▀ █░█  ┎┤ DATA ENGINEER                                       ├┒
+▄█ ██▄ █░▀█ ░█░ █▄█  ┖┤ Obteniendo datos para empresas, personas... para ti ├┚
+             STUDIO
+```
 
-```
-█▀ █▀▀ █▄░█ ▀█▀ █░█   DATA ENGINEER
-▄█ ██▄ █░▀█ ░█░ █▄█   Obteniendo datos para empresas, personas... 
-                                            STUDIO                                                               para ti.
-```
+# dotfiles
+Respaldo de mis archivos de configuración para linux. Optimizado para la distro de linux Fedora.
 
 # Instalación
 ```bash
