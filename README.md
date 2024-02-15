@@ -1,7 +1,7 @@
 ```
 █▀ █▀▀ █▄░█ ▀█▀ █░█  ┎┤ DATA ENGINEER                                       ├┒
 ▄█ ██▄ █░▀█ ░█░ █▄█  ┖┤ Obteniendo datos para empresas, personas... para ti ├┚
-             STUDIO
+                STUDIO
 ```
 
 # dotfiles
