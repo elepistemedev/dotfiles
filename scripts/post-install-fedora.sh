@@ -24,7 +24,7 @@ sudo dnf -y --allowerasing install handbrake-gui avidemux kdenlive openshot live
 
 wget https://dl.google.com/linux/direct/google-chrome-stable_current_x86_64.rpm
 sudo dnf -y install ./google-chrome-stable_current_x86_64.rpm
-sudo rm ./google-chrome-stable_current_x86_64.rpm
+sudo rm google-chrome-stable_current_x86_64.rpm
 
 sudo dnf install dnf-plugins-core
 
