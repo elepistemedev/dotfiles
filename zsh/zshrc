@@ -121,6 +121,9 @@ alias dc="docker compose"
 alias tmux-on="tmuxinator start"
 alias tmux-off="tmuxinator stop"
 
+# Youtube-dlp
+alias yt-ls='yt-dlp -o "%(playlist)s/%(playlist_index)s - %(title)s.%(ext)s" '
+
 open () {
     xdg-open $* > /dev/null 2>&1
 }

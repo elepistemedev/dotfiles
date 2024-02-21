@@ -63,6 +63,8 @@ composer global require laravel/installer
 curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.5/install.sh | bash
 # nvm install node 
 
+sudo dnf groupinstall "Development Tools" "Development Libraries"
+
 # Docker setup
 sudo groupadd docker
 sudo usermod -aG docker $USER
