@@ -59,6 +59,7 @@
     editor = nvim
     excludesfile = ~/.gitignore_global
     pager = delta
+	autocrlf = input
 [diff]
     tool = vimdiff
 [fetch]

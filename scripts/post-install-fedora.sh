@@ -36,7 +36,7 @@ sudo dnf -y install brave-browser
 
 sudo dnf -y --allowerasing install xine-lib xine-lib-extras xine-lib-extras-freeworld libdvdread libdvdnav lsdvd libdvbpsi ffmpeg ffmpeg-libs libmatroska xvidcore gstreamer-ffmpeg gstreamer-plugins-ugly
 
-sudo dnf -y install gimp inkscape 
+sudo dnf -y install gimp inkscape
 
 sudo dnf -y install libreoffice-writer libreoffice-calc libreoffice-impress libreoffice-draw libreoffice-langpack-es
 
@@ -48,4 +48,3 @@ sudo dnf -y install code
 sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
 
 git clone --depth=1 https://github.com/romkatv/powerlevel10k.git ${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/themes/powerlevel10k
-

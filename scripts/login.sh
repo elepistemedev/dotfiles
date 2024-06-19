@@ -11,27 +11,27 @@ os=$(hostnamectl | grep -i 'operating system' | awk -F ':' '{print $2}' | awk -F
 
 case $os in
 *Fedora)
-    os_listar="\uf30a Fedora"
-    ;;
+	os_listar="\uf30a Fedora"
+	;;
 *Ubuntu)
-    os_listar="\uebc9 Ubuntu"
-    ;;
+	os_listar="\uebc9 Ubuntu"
+	;;
 *)
-    os_listar="👽 en el Multiverso"
-    ;;
+	os_listar="👽 en el Multiverso"
+	;;
 esac
-
+source /home/el/anaconda3/bin/deactivate
 clear
 
 # printf "
-# █▀ █▀▀ █▄░█ ▀█▀ █░█     $os
-# ▄█ ██▄ █░▀█ ░█░ █▄█    $rootUsed/$rootTotal   $memUsed/$memTotal   $cpuTemp  辰$loadAvg
-#              STUDIO
+# █▀ █▀▀ █▄░█ ▀█▀ █░█     $os
+# ▄█ ██▄ █░▀█ ░█░ █▄█    $rootUsed/$rootTotal   $memUsed/$memTotal   $cpuTemp  辰$loadAvg
+#             .STUDIO
 # "
 
 printf "
-█▀ █▀▀ █▄░█ ▀█▀ █░█  ┎┤ DATA ENGINEER                                       ├┒
-▄█ ██▄ █░▀█ ░█░ █▄█  ┖┤ Obteniendo datos para empresas, personas... para ti ├┚
-             STUDIO en $os_listar
+  █▀ █▀▀ █▄░█ ▀█▀ █░█  ┎┤ Arquitectura de Software ├┒
+  ▄█ ██▄ █░▀█ ░█░ █▄█  ┖┤    en Python | Django    ├┚
+              .studio en $os_listar
 "
 exit
