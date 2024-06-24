@@ -16,6 +16,21 @@ CNC=$(tput sgr0)
 backup_folder=~/.SENTUBackup
 date=$(date +%Y%m%d-%H%M%S)
 
+# Función para ejecutar un bloque de script y mostrar un mensaje de error si falla
+function ejecutar_bloque() {
+  local script="$1"
+  local mensaje="$2"
+
+  sh ~/.dotfiles/scripts/login.sh
+  echo "$mensaje"
+  if sh "$script"; then
+    echo "Ejecución exitosa"
+  else
+    echo "**ERROR:** Falló la ejecución de '$script'"
+    exit 1
+  fi
+}
+
 logo () {
 
     local text="${1:?}"
@@ -62,12 +77,13 @@ clear
 logo "Instalando paquetes necesarios.."
 
 dependencias=(alacritty base-devel brightnessctl bspwm dunst feh firefox geany git kitty imagemagick jq \
-			        jgmenu libwebp lsd maim mpc mpd neovim ncmpcpp npm pamixer pacman-contrib \
-			        papirus-icon-theme physlock picom playerctl polybar polkit-gnome python-gobject ranger \
-			        redshift rofi rustup sxhkd tmux ttf-inconsolata ttf-jetbrains-mono ttf-jetbrains-mono-nerd \
-			        ttf-joypixels ttf-terminus-nerd ueberzug webp-pixbuf-loader xclip xdg-user-dirs \
-			        xdo xdotool xorg-xdpyinfo xorg-xkill xorg-xprop xorg-xrandr xorg-xsetroot \
-			        xorg-xwininfo zsh zsh-autosuggestions zsh-history-substring-search zsh-syntax-highlighting)
+                docker-ce docker-ce-cli containerd.io docker-compose-plugin jdk-openjdk\
+                jgmenu libwebp lsd maim mpc mpd neovim ncmpcpp pamixer pacman-contrib \
+                papirus-icon-theme physlock picom playerctl polybar polkit-gnome python-gobject ranger \
+                redshift rofi ruby rustup sxhkd tmux ttf-inconsolata ttf-jetbrains-mono ttf-jetbrains-mono-nerd \
+                ttf-joypixels ttf-terminus-nerd ueberzug webp-pixbuf-loader xclip xdg-user-dirs \
+                xdo xdotool xorg-xdpyinfo xorg-xkill xorg-xprop xorg-xrandr xorg-xsetroot \
+                xorg-xwininfo zsh zsh-autosuggestions zsh-history-substring-search zsh-syntax-highlighting)
 
 is_installed() {
     pacman -Q "$1" &> /dev/null
@@ -335,9 +351,28 @@ systemctl --user enable --now mpd.service
 printf "%s%sDone!!%s\n\n" "${BLD}" "${CGR}" "${CNC}"
 sleep 2
 
+########## --------- Instalar Script ---------- ##########
+# Cargo
+ejecutar_bloque ~/.dotfiles/scripts/install-cargo-app.sh "Ejecutando instalación de dependencias con cargo"
+
+# Tmux y complementos
+ejecutar_bloque ~/.dotfiles/scripts/install-tmux.sh "Ejecutando instalación de Tmux y complementos para Tmux"
+
+# Fonts
+ejecutar_bloque ~/.dotfiles/scripts/install-fonts.sh "Ejecutando instalación de las fuentes de letras necesarias"
+
+
+
+########## --------- Docker setup ---------- ##########
+sudo groupadd docker
+sudo usermod -aG docker $USER
+sudo systemctl enable docker.service
+sudo systemctl enable containerd.service
+sudo systemctl start docker
+
 ########## --------- Changing shell to zsh ---------- ##########
 
-logo "Changing default shell to zsh"
+logo "Cambiando shell to zsh"
 
 if [[ $SHELL != "/usr/bin/zsh" ]]; then
     printf "\n%s%sCambiando tu shell a zsh. Se necesita su contraseña de root.%s\n\n" "${BLD}" "${CYE}" "${CNC}"
