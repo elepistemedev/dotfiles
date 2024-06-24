@@ -77,7 +77,7 @@ clear
 logo "Instalando paquetes necesarios.."
 
 dependencias=(alacritty base-devel brightnessctl bspwm dunst feh firefox geany git kitty imagemagick jq \
-                docker-ce docker-ce-cli containerd.io docker-compose-plugin jdk-openjdk\
+                docker jdk-openjdk\
                 jgmenu libwebp lsd maim mpc mpd neovim ncmpcpp pamixer pacman-contrib \
                 papirus-icon-theme physlock picom playerctl polybar polkit-gnome python-gobject ranger \
                 redshift rofi ruby rustup sxhkd tmux ttf-inconsolata ttf-jetbrains-mono ttf-jetbrains-mono-nerd \
@@ -93,14 +93,14 @@ printf "%s%sChecking for required packages...%s\n" "${BLD}" "${CBL}" "${CNC}"
 for paquete in "${dependencias[@]}"; do
     if ! is_installed "$paquete"; then
         if sudo pacman -S "$paquete" --noconfirm >/dev/null 2>> SENTUError.log; then
-            printf "%s%s%s %shas been installed succesfully.%s\n" "${BLD}" "${CYE}" "$paquete" "${CBL}" "${CNC}"
+            printf "%s%s%s %sse ha instalado correctamente.%s\n" "${BLD}" "${CYE}" "$paquete" "${CBL}" "${CNC}"
             sleep 1
         else
-            printf "%s%s%s %shas not been installed correctly. See %sSENTUError.log %sfor more details.%s\n" "${BLD}" "${CYE}" "$paquete" "${CRE}" "${CBL}" "${CRE}" "${CNC}"
+            printf "%s%s%s %sno se ha instalado correctamente. Ver %sSENTUError.log %spara más detalles.%s\n" "${BLD}" "${CYE}" "$paquete" "${CRE}" "${CBL}" "${CRE}" "${CNC}"
             sleep 1
         fi
     else
-        printf '%s%s%s %sis already installed on your system!%s\n' "${BLD}" "${CYE}" "$paquete" "${CGR}" "${CNC}"
+        printf '%s%s%s %s¡Ya está instalado en su sistema!%s\n' "${BLD}" "${CYE}" "$paquete" "${CGR}" "${CNC}"
         sleep 1
     fi
 done
@@ -353,22 +353,31 @@ sleep 2
 
 ########## --------- Instalar Script ---------- ##########
 # Cargo
-ejecutar_bloque ~/.dotfiles/scripts/install-cargo-app.sh "Ejecutando instalación de dependencias con cargo"
+ejecutar_bloque ~/dotfiles/scripts/install-cargo-app.sh "Ejecutando instalación de dependencias con cargo"
 
 # Tmux y complementos
-ejecutar_bloque ~/.dotfiles/scripts/install-tmux.sh "Ejecutando instalación de Tmux y complementos para Tmux"
+ejecutar_bloque ~/dotfiles/scripts/install-tmux.sh "Ejecutando instalación de Tmux y complementos para Tmux"
 
 # Fonts
-ejecutar_bloque ~/.dotfiles/scripts/install-fonts.sh "Ejecutando instalación de las fuentes de letras necesarias"
+ejecutar_bloque ~/dotfiles/scripts/install-fonts.sh "Ejecutando instalación de las fuentes de letras necesarias"
 
 
 
 ########## --------- Docker setup ---------- ##########
+
+
 sudo groupadd docker
 sudo usermod -aG docker $USER
+
+sudo systemctl start docker.service
 sudo systemctl enable docker.service
-sudo systemctl enable containerd.service
 sudo systemctl start docker
+
+DOCKER_CONFIG=${DOCKER_CONFIG:-$HOME/.docker}
+mkdir -p $DOCKER_CONFIG/cli-plugins
+curl -SL https://github.com/docker/compose/releases/download/v2.27.2/docker-compose-linux-x86_64 -o $DOCKER_CONFIG/cli-plugins/docker-compose
+
+chmod +x $DOCKER_CONFIG/cli-plugins/docker-compose
 
 ########## --------- Changing shell to zsh ---------- ##########
 

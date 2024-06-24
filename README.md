@@ -48,11 +48,11 @@ Respaldo de mis archivos de configuración para linux. Optimizado para la distro
 
 ```bash
 # Descargamos el autoscript
-curl https://raw.githubusercontent.com/elepistemedev/dotfiles/archlinux/SENTUInstaller -o RiceInstaller.sh
+curl https://raw.githubusercontent.com/elepistemedev/dotfiles/archlinux/SENTUInstaller -o SENTUInstaller.sh
 
 # Le damos permisos de ejecucion
-chmod +x RiceInstaller.sh
+chmod +x SENTUInstaller.sh
 
 # Ejecutamos
-./RiceInstaller.sh
+./SENTUInstaller.sh
 ```
