@@ -65,6 +65,11 @@ curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.5/install.sh | bash
 
 sudo dnf groupinstall "Development Tools" "Development Libraries"
 
+# Docker machine
+curl -L https://github.com/docker/machine/releases/download/v0.16.2/docker-machine-`uname -s`-`uname -m` >/tmp/docker-machine &&
+    chmod +x /tmp/docker-machine &&
+    sudo cp /tmp/docker-machine /usr/local/bin/docker-machine
+
 # Docker setup
 sudo groupadd docker
 sudo usermod -aG docker $USER
