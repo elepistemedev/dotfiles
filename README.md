@@ -3,6 +3,7 @@
 ▄█ ██▄ █░▀█ ░█░ █▄█  ┖┤ Obteniendo datos para empresas, personas... para ti ├┚
                 STUDIO
 ```
+
 # Guía de instalación del sistema operativo para SENTU.studio
 
 ## Preparación
@@ -39,8 +40,6 @@ A continuación usamos el comando archinstall para configurar el pre-installer
 ```bash
 archinstall
 ```
-
-
 
 ## Post-instalación dotfiles
 
