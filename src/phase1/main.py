@@ -1,13 +1,13 @@
-from logger_utils import setup_logger
-from system_info import SystemInfo
-from system_operations import update_system, install_dependencies
-import logo
+from shared.logger_utils import setup_logger
+from shared.system_info import SystemInfo
+from shared.system_operations import update_system, install_dependencies
+from shared.logo import show as logo
 
 logger = setup_logger()
 
 
 def main():
-    logo.show("💾 Post Instalación - 1ra Fase")
+    logo("💾 Post Instalación - 1ra Fase")
     logger.info("Iniciando fase 1 (Bootstrap)...")
 
     # Detectar sistema operativo
