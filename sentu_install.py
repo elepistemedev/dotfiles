@@ -21,7 +21,7 @@ def download_and_extract(repo_url, temp_dir):
         print("Extrayendo archivos...")
         with zipfile.ZipFile(zip_path, "r") as zip_ref:
             zip_ref.extractall(temp_dir)
-        extracted_path = temp_dir / "dev"
+        extracted_path = temp_dir
         return extracted_path
     except Exception as e:
         print(f"Error al descargar o extraer el repositorio: {e}")
