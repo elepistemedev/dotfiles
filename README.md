@@ -9,5 +9,7 @@ Respaldo de mis archivos de configuración para linux. Optimizado para la distro
 
 # Instalación
 ```bash
-wget -O - https://is.gd/sentu_start | bash
+```bash
+curl -s https://raw.githubusercontent.com/elepistemedev/dotfiles/refs/heads/dev/sentu_install.py | python3
+```
 ```

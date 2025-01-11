@@ -30,7 +30,7 @@ def download_and_extract(repo_url, temp_dir):
 
 def execute_phase1(temp_dir):
     """Ejecuta el script de la primera fase desde el directorio temporal."""
-    main_script = temp_dir / "dev" / "src" / "phase1" / "main.py"
+    main_script = temp_dir / "src" / "phase1" / "main.py"
     if main_script.exists():
         print("Ejecutando Fase 1 desde el directorio temporal...")
         try:
