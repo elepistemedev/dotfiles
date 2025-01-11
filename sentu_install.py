@@ -30,7 +30,7 @@ def download_and_extract(repo_url, temp_dir):
 
 def execute_phase1(temp_dir):
     """Ejecuta el script de la primera fase desde el directorio temporal."""
-    main_script = temp_dir / "src" / "phase1" / "main.py"
+    main_script = temp_dir / "dotfiles-dev" / "src" / "phase1" / "main.py"
     if main_script.exists():
         print("Ejecutando Fase 1 desde el directorio temporal...")
         try:
@@ -58,7 +58,7 @@ def main():
     finally:
         # Limpieza del directorio temporal
         print(f"Limpiando el directorio temporal: {temp_dir}")
-        # shutil.rmtree(temp_dir, ignore_errors=True)
+        shutil.rmtree(temp_dir, ignore_errors=True)
         print("Directorio temporal eliminado. Proceso completado.")
 
 
