@@ -58,7 +58,7 @@ def main():
     finally:
         # Limpieza del directorio temporal
         print(f"Limpiando el directorio temporal: {temp_dir}")
-        shutil.rmtree(temp_dir, ignore_errors=True)
+        # shutil.rmtree(temp_dir, ignore_errors=True)
         print("Directorio temporal eliminado. Proceso completado.")
 
 
