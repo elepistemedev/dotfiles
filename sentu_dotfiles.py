@@ -137,14 +137,15 @@ def update_system(system_info):
 
 
 def clone_repo():
-    """clona el repositorio desde github"""
+    """Clona el repositorio desde github en la carpeta home del usuario"""
     repo_url = "https://github.com/elepistemedev/dotfiles.git"
+    home_dir = str(Path.home())
+    repo_path = os.path.join(home_dir, "dotfiles")
 
     try:
-        logger.info(f"Clonando repositorio dotfiles...")
-        subprocess.run(["git", "clone", repo_url], check=True)
-
-        logger.info("Todas las dependencias fueron instaladas correctamente")
+        logger.info(f"Clonando repositorio dotfiles en {home_dir}...")
+        subprocess.run(["git", "clone", repo_url, repo_path], check=True)
+        logger.info("Repositorio clonado correctamente")
         return True
     except Exception as e:
         logger.error(f"Error clonando repositorio desde github: {str(e)}")
@@ -164,7 +165,8 @@ def install_dependencies(system_info):
         "fd-find",
         "unzip",
         "neovim",
-    ]  # Agregar más dependencias según necesites
+        "zsh",
+    ]  # apt-getgar más dependencias según necesites
 
     if not system_info.install_command:
         logger.error("No se pudo determinar el comando de instalación")
@@ -184,6 +186,30 @@ def install_dependencies(system_info):
         return True
     except Exception as e:
         logger.error(f"Error instalando dependencias: {str(e)}")
+        return False
+
+
+def install_and_configure_zsh():
+    """Configurando zsh como shell por defecto"""
+
+    try:
+        # Cambiar shell por defecto a zsh
+        logger.info("Configurando zsh como shell por defecto...")
+        user_name = os.getenv("USER")
+        result = subprocess.run(
+            ["sudo", "chsh", "-s", "/bin/zsh", str(user_name)],
+            capture_output=True,
+            text=True,
+        )
+        if result.returncode != 0:
+            raise Exception(
+                f"Error configurando zsh como shell por defecto: {result.stderr}"
+            )
+
+        logger.info("zsh instalado y configurado correctamente")
+        return True
+    except Exception as e:
+        logger.error(f"Error instalando/configurando zsh: {str(e)}")
         return False
 
 
@@ -240,11 +266,11 @@ def setup_anaconda():
         # Limpiar instalador
         installer_path.unlink()
 
-        # Configurar PATH
-        bashrc_path = Path.home() / ".bashrc"
-        with open(bashrc_path, "a") as bashrc:
-            bashrc.write("\n# Anaconda3 PATH\n")
-            bashrc.write(f'export PATH="{anaconda_path}/bin:$PATH"\n')
+        # Configurar PATH en .zshrc en lugar de .bashrc
+        zshrc_path = Path.home() / ".zshrc"
+        with open(zshrc_path, "a") as zshrc:
+            zshrc.write("\n# Anaconda3 PATH\n")
+            zshrc.write(f'export PATH="{anaconda_path}/bin:$PATH"\n')
 
         logger.info("Anaconda instalado correctamente")
         return True
@@ -302,19 +328,24 @@ def main():
         logger.error("No se pudieron instalar las dependencias")
         sys.exit(1)
 
-    # 4. Instalar Anaconda
+    # 4. Instalar y configurar zsh
+    if not install_and_configure_zsh():
+        logger.error("No se pudo instalar/configurar zsh")
+        sys.exit(1)
+
+    # 5. Clonar repositorio desde github
+    if not clone_repo():
+        logger.error("No se pudo clonar el repositorio desde github")
+        sys.exit(1)
+
+    # 6. Instalar Anaconda
     if not setup_anaconda():
         logger.error("No se pudo instalar Anaconda")
         sys.exit(1)
 
-    # 5. Instalar paquetes Python necesarios
+    # 7. Instalar paquetes Python necesarios
     if not install_python_packages():
         logger.error("No se pudieron instalar los paquetes Python")
-        sys.exit(1)
-
-    # 6. Clonar repositorio desde github
-    if not clone_repo():
-        logger.error("No se pudo clonar el repositorio desde github")
         sys.exit(1)
 
     logger.info("\n=== Fase 1 completada exitosamente ===")
