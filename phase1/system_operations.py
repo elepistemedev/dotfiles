@@ -207,15 +207,12 @@ def install_python_packages():
 
 def install_prompt():
     """Instala el prompt starship"""
-    repo_url = "https://starship.rs/install.sh"
+    anaconda_pip = str(Path.home() / "anaconda3" / "bin" / "conda")
     try:
         logging.info("Instalando el prompt Starship...")
-        # Obtener el contenido del script
-        curl_process = subprocess.run(
-            ["curl", "-sS", repo_url], capture_output=True, text=True, check=True
+        subprocess.run(
+            [anaconda_pip, "install", "-c", "conda-forge", "starship"], check=True
         )
-        # Ejecutar el script con sh
-        subprocess.run(["sh"], input=curl_process.stdout, text=True, check=True)
 
         # Configurar PATH en .zshrc
         zshrc_path = Path.home() / ".zshrc"
