@@ -1,3 +1,4 @@
+# BUG: Eliminar este archivo
 import os
 import sys
 import subprocess
@@ -5,9 +6,9 @@ import logging
 import platform
 from pathlib import Path
 import urllib.request
-from datetime import datetime
 
 
+# INFO: Listo en logger_utils.py
 def setup_logger():
     logger = logging.getLogger("Bootstrap")
     logger.setLevel(logging.INFO)
@@ -28,6 +29,7 @@ def setup_logger():
 logger = setup_logger()
 
 
+# INFO: Listo en system_info.py
 class SystemInfo:
     def __init__(self):
         self.system = platform.system().lower()
@@ -110,6 +112,7 @@ class SystemInfo:
             self.install_command = pm_info["install"]
 
 
+# INFO: Listo en system_operations.py
 def update_system(system_info):
     """Actualiza el sistema usando el gestor de paquetes correspondiente"""
     if not system_info.update_command:
@@ -152,6 +155,7 @@ def clone_repo():
         return False
 
 
+# INFO: Listo en system_operations.py
 def install_dependencies(system_info):
     """Instala las dependencias necesarias"""
     dependencies = [
@@ -189,6 +193,7 @@ def install_dependencies(system_info):
         return False
 
 
+# BUG: Falta
 def install_and_configure_zsh():
     """Configurando zsh como shell por defecto"""
 
@@ -213,6 +218,7 @@ def install_and_configure_zsh():
         return False
 
 
+# BUG: Falta
 def setup_anaconda():
     """Descarga e instala Anaconda"""
     anaconda_url = (
@@ -282,6 +288,7 @@ def setup_anaconda():
         return False
 
 
+# BUG: Falta
 def install_python_packages():
     """Instala los paquetes Python necesarios para la fase 2"""
     packages = ["rich", "questionary", "typer", "tqdm"]
@@ -311,39 +318,39 @@ def install_python_packages():
 def main():
     logger.info("Iniciando fase 1 (Bootstrap)...")
 
-    # 1. Detectar sistema operativo
+    # INFO: 1. Detectar sistema operativo
     system_info = SystemInfo()
     logger.info(f"Sistema detectado: {system_info.system}")
     if system_info.distribution:
         logger.info(f"Distribución: {system_info.distribution} {system_info.version}")
         logger.info(f"Gestor de paquetes: {system_info.package_manager}")
 
-    # 2. Actualizar sistema
+    # INFO: 2. Actualizar sistema
     if not update_system(system_info):
         logger.error("No se pudo actualizar el sistema")
         sys.exit(1)
 
-    # 3. Instalar dependencias básicas
+    # INFO: 3. Instalar dependencias básicas
     if not install_dependencies(system_info):
         logger.error("No se pudieron instalar las dependencias")
         sys.exit(1)
 
-    # 4. Instalar y configurar zsh
+    # BUG: 4. Instalar y configurar zsh
     if not install_and_configure_zsh():
         logger.error("No se pudo instalar/configurar zsh")
         sys.exit(1)
 
-    # 5. Clonar repositorio desde github
+    # BUG: 5. Clonar repositorio desde github
     if not clone_repo():
         logger.error("No se pudo clonar el repositorio desde github")
         sys.exit(1)
 
-    # 6. Instalar Anaconda
+    # BUG:: 6. Instalar Anaconda
     if not setup_anaconda():
         logger.error("No se pudo instalar Anaconda")
         sys.exit(1)
 
-    # 7. Instalar paquetes Python necesarios
+    # BUG: 7. Instalar paquetes Python necesarios
     if not install_python_packages():
         logger.error("No se pudieron instalar los paquetes Python")
         sys.exit(1)
@@ -358,4 +365,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-

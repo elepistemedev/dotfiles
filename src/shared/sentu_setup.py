@@ -1,3 +1,4 @@
+# BUG: Eliminar este archivo
 from rich.panel import Panel
 from rich import console
 from rich.progress import (

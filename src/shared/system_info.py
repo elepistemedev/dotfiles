@@ -1,6 +1,8 @@
 import platform
 import subprocess
-import logging
+from logger_utils import setup_logger
+
+logging = setup_logger()
 
 
 class SystemInfo:
