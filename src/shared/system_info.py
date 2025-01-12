@@ -1,6 +1,6 @@
 import platform
 import subprocess
-from logger_utils import setup_logger
+from .logger_utils import setup_logger
 
 logging = setup_logger()
 
