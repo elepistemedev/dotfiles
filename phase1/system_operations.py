@@ -226,3 +226,47 @@ def install_prompt():
     except Exception as e:
         logging.error(f"Error instalando el prompt Starship: {str(e)}")
         return False
+
+
+def install_fnm():
+    """Instala Fast Node Manager (fnm)"""
+    repo_url = "https://fnm.vercel.app/install"
+    try:
+        logging.info("Instalando Fast Node Manager...")
+        # Obtener el contenido del script
+        curl_process = subprocess.run(
+            ["curl", "-sS", repo_url], capture_output=True, text=True, check=True
+        )
+        # Ejecutar el script con sh
+        subprocess.run(["sh"], input=curl_process.stdout, text=True, check=True)
+
+        # Configurar PATH en .zshrc
+        zshrc_path = Path.home() / ".zshrc"
+        with open(zshrc_path, "a") as zshrc:
+            zshrc.write("\n# Starship Prompt\n")
+            zshrc.write('eval "$(fnm env --use-on-cd --shell zsh)"\n')
+
+        logging.info("Prompt Startship instalado correctamente")
+        return True
+    except Exception as e:
+        logging.error(f"Error instalando el prompt Starship: {str(e)}")
+        return False
+
+
+def install_cargo():
+    """Instala Fast Node Manager (fnm)"""
+    repo_url = "https://sh.rustup.rs"
+    try:
+        logging.info("Instalando Fast Node Manager...")
+        # Obtener el contenido del script
+        curl_process = subprocess.run(
+            ["curl", "-sSF", repo_url], capture_output=True, text=True, check=True
+        )
+        # Ejecutar el script con sh
+        subprocess.run(["sh"], input=curl_process.stdout, text=True, check=True)
+
+        logging.info("Prompt Startship instalado correctamente")
+        return True
+    except Exception as e:
+        logging.error(f"Error instalando el prompt Starship: {str(e)}")
+        return False

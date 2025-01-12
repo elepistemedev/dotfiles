@@ -8,6 +8,7 @@ from system_operations import (
     setup_anaconda,
     install_python_packages,
     install_prompt,
+    install_cargo,
 )
 from common.logo import show as logo
 
@@ -60,8 +61,14 @@ def main():
         logger.error("No se pudo instalar el prompt Starship")
         return
 
-    # TODO: Falta instalar Node
+    # WARNING: Falta instalar Node (por alguna razón ya se instala)
+
     # TODO: Falta instalar rust
+    # 10. Instalar Cargo
+    if not install_cargo():
+        logger.error("No se pudo instalar Cargo")
+        return
+
     # TODO: Falta instalar go
 
     logo("🎉 Fase 1 completada exitosamente")
