@@ -5,6 +5,7 @@ import tempfile
 import shutil
 from subprocess import run
 from pathlib import Path
+import os
 
 # URL del repositorio en formato ZIP
 REPO_URL = "https://github.com/elepistemedev/dotfiles/archive/refs/heads/dev.zip"
@@ -30,12 +31,17 @@ def download_and_extract(repo_url, temp_dir):
 
 def execute_phase1(temp_dir):
     """Ejecuta el script de la primera fase desde el directorio temporal."""
-    main_script = temp_dir / "dotfiles-dev" / "src" / "main.py"
-    print(f"archivo main.py esta en: {str(main_script)}")
+    main_script = temp_dir / "dotfiles-dev" / "phase1" / "main.py"
+    project_root = temp_dir / "dotfiles-dev"
+
+    print(f"Archivo main.py está en: {str(main_script)}")
     if main_script.exists():
         print("Ejecutando Fase 1 desde el directorio temporal...")
         try:
-            run([sys.executable, str(main_script)], check=True)
+            # Agregar el directorio raíz del proyecto al PYTHONPATH
+            env = dict(PYTHONPATH=str(project_root), **os.environ)
+
+            run([sys.executable, str(main_script)], check=True, env=env)
         except Exception as e:
             print(f"Error al ejecutar Fase 1: {e}")
             sys.exit(1)
