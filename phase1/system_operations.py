@@ -113,7 +113,7 @@ def clone_repo():
 def setup_anaconda():
     """Descarga e instala Anaconda"""
     anaconda_url = (
-        "https://repo.anaconda.com/archive/Anaconda3-2023.09-0-Linux-x86_64.sh"
+        "https://repo.anaconda.com/archive/Anaconda3-2024.10-1-Linux-x86_64.sh"
     )
     installer_path = Path.home() / "anaconda_installer.sh"
     anaconda_path = Path.home() / "anaconda3"

@@ -58,7 +58,7 @@ def main():
     # TODO: Falta instalar rust
     # TODO: Falta instalar go
 
-    logo("🎉 Fase 1 completada exitosamente 🎉")
+    logo("🎉 Fase 1 completada exitosamente")
 
 
 if __name__ == "__main__":
