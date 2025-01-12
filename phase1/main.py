@@ -1,6 +1,6 @@
-from shared.logger_utils import setup_logger
-from shared.system_info import SystemInfo
-from shared.system_operations import (
+from logger_utils import setup_logger
+from common.system_info import SystemInfo
+from system_operations import (
     update_system,
     install_dependencies,
     install_and_configure_zsh,
@@ -8,7 +8,7 @@ from shared.system_operations import (
     setup_anaconda,
     install_python_packages,
 )
-from shared.logo import show as logo
+from common.logo import show as logo
 
 logger = setup_logger()
 
