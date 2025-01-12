@@ -335,22 +335,22 @@ def main():
         logger.error("No se pudieron instalar las dependencias")
         sys.exit(1)
 
-    # BUG: 4. Instalar y configurar zsh
+    # WARNING: 4. Instalar y configurar zsh
     if not install_and_configure_zsh():
         logger.error("No se pudo instalar/configurar zsh")
         sys.exit(1)
 
-    # BUG: 5. Clonar repositorio desde github
+    # WARNING: 5. Clonar repositorio desde github
     if not clone_repo():
         logger.error("No se pudo clonar el repositorio desde github")
         sys.exit(1)
 
-    # BUG:: 6. Instalar Anaconda
+    # WARNING:: 6. Instalar Anaconda
     if not setup_anaconda():
         logger.error("No se pudo instalar Anaconda")
         sys.exit(1)
 
-    # BUG: 7. Instalar paquetes Python necesarios
+    # WARNING: 7. Instalar paquetes Python necesarios
     if not install_python_packages():
         logger.error("No se pudieron instalar los paquetes Python")
         sys.exit(1)
