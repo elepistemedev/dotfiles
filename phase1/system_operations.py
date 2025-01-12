@@ -1,5 +1,5 @@
 import subprocess
-from .logger_utils import setup_logger
+from common.logger_utils import setup_logger
 import os
 from pathlib import Path
 import urllib.request
