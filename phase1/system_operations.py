@@ -254,19 +254,19 @@ def install_fnm():
 
 
 def install_cargo():
-    """Instala Fast Node Manager (fnm)"""
+    """Instala Cargo"""
     repo_url = "https://sh.rustup.rs"
     try:
-        logging.info("Instalando Fast Node Manager...")
+        logging.info("Instalando Cargo...")
         # Obtener el contenido del script
         curl_process = subprocess.run(
-            ["curl", "-sSF", repo_url], capture_output=True, text=True, check=True
+            ["curl", "-sSf", repo_url], capture_output=True, text=True, check=True
         )
         # Ejecutar el script con sh
         subprocess.run(["sh"], input=curl_process.stdout, text=True, check=True)
 
-        logging.info("Prompt Startship instalado correctamente")
+        logging.info("Cargo instalado correctamente")
         return True
     except Exception as e:
-        logging.error(f"Error instalando el prompt Starship: {str(e)}")
+        logging.error(f"Error instalando Cargo: {str(e)}")
         return False
