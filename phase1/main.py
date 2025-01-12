@@ -1,4 +1,4 @@
-from logger_utils import setup_logger
+from common.logger_utils import setup_logger
 from common.system_info import SystemInfo
 from system_operations import (
     update_system,
