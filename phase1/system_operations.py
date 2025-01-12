@@ -47,6 +47,7 @@ def install_dependencies(system_info):
         "unzip",
         "neovim",
         "zsh",
+        "fastfetch",
     ]
 
     if not system_info.install_command:
@@ -102,7 +103,7 @@ def clone_repo():
 
     try:
         logging.info(f"Clonando repositorio dotfiles en {home_dir}...")
-        subprocess.run(["git", "clone", repo_url, repo_path], check=True)
+        subprocess.run(["git", "clone", "-b", "dev", repo_url, repo_path], check=True)
         logging.info("Repositorio clonado correctamente")
         return True
     except Exception as e:
