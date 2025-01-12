@@ -48,6 +48,7 @@ def install_dependencies(system_info):
         "neovim",
         "zsh",
         "fastfetch",
+        "golang",
     ]
 
     if not system_info.install_command:
