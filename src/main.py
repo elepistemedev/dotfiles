@@ -54,6 +54,10 @@ def main():
         logger.error("No se pudieron instalar los paquetes Python")
         return
 
+    # TODO: Falta instalar Node
+    # TODO: Falta instalar rust
+    # TODO: Falta instalar go
+
     logger.info("\n=== Fase 1 completada exitosamente ===")
 
 
