@@ -7,6 +7,7 @@ from system_operations import (
     clone_repo,
     setup_anaconda,
     install_python_packages,
+    install_prompt,
 )
 from common.logo import show as logo
 
@@ -52,6 +53,11 @@ def main():
     # 7. Instalar paquetes Python necesarios
     if not install_python_packages():
         logger.error("No se pudieron instalar los paquetes Python")
+        return
+
+    # 8. Instalar prompt Starship
+    if not install_prompt():
+        logger.error("No se pudo instalar el prompt Starship")
         return
 
     # TODO: Falta instalar Node

@@ -203,3 +203,24 @@ def install_python_packages():
     except Exception as e:
         logging.error(f"Error instalando paquetes Python: {str(e)}")
         return False
+
+
+def install_prompt():
+    """Instala el prompt starship"""
+    repo_url = "https://starship.rs/install.sh"
+
+    try:
+        logging.info("Instalando el prompt Starship...")
+        subprocess.run(["curl", "-sS", repo_url, "|", "sh"], check=True)
+
+        # Configurar PATH en .zshrc
+        zshrc_path = Path.home() / ".zshrc"
+        with open(zshrc_path, "a") as zshrc:
+            zshrc.write("\n# Starship Prompt\n")
+            zshrc.write('eval "$(starship init zsh)"\n')
+
+        logging.info("Prompt Startship instalado correctamente")
+        return True
+    except Exception as e:
+        logging.error(f"Error instalando el prompt Starship: {str(e)}")
+        return False
