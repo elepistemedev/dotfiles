@@ -208,10 +208,14 @@ def install_python_packages():
 def install_prompt():
     """Instala el prompt starship"""
     repo_url = "https://starship.rs/install.sh"
-
     try:
         logging.info("Instalando el prompt Starship...")
-        subprocess.run(["curl", "-sS", repo_url, "|", "sh"], check=True)
+        # Obtener el contenido del script
+        curl_process = subprocess.run(
+            ["curl", "-sS", repo_url], capture_output=True, text=True, check=True
+        )
+        # Ejecutar el script con sh
+        subprocess.run(["sh"], input=curl_process.stdout, text=True, check=True)
 
         # Configurar PATH en .zshrc
         zshrc_path = Path.home() / ".zshrc"
