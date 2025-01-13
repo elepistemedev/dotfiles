@@ -80,7 +80,7 @@ def install_dependencies(system_info):
 
     success = True
     try:
-        for package, details in system_info.dependencies_core.items():
+        for package in system_info.dependencies_core:
             logging.info(f"Instalando {package}...")
             cmd = system_info.install_command + [package]
             result = subprocess.run(cmd, capture_output=True, text=True)
