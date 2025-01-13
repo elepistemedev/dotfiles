@@ -68,7 +68,7 @@ class SystemInfo:
                         "sudo",
                         "dnf",
                         "install",
-                        "https://download1.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-$(rpm -E %fedora).noarch.rpm",
+                        f"https://download1.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-{self.version}.noarch.rpm",
                     ],
                     [
                         "sudo",
