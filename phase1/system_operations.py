@@ -310,13 +310,19 @@ def install_lazyvim():
     repo_url = "https://github.com/LazyVim/starter"
     home_dir = str(Path.home())
     repo_path = os.path.join(home_dir, ".config/nvim")
-    # Requerido
-    subprocess.run("mv ~/.config/nvim{,.bak}", shell=True, check=True)
-    # optional but recommended
-    subprocess.run("mv ~/.local/share/nvim{,.bak}", shell=True, check=True)
-    subprocess.run("mv ~/.local/state/nvim{,.bak}", shell=True, check=True)
-    subprocess.run("mv ~/.cache/nvim{,.bak}", shell=True, check=True)
+
+    # Función helper para hacer backup de directorios si existen
+    def backup_if_exists(path):
+        if os.path.exists(path):
+            subprocess.run(f"mv {path}{{,.bak}}", shell=True, check=True)
+
     try:
+        # Hacer backup de los directorios si existen
+        backup_if_exists(os.path.join(home_dir, ".config/nvim"))
+        backup_if_exists(os.path.join(home_dir, ".local/share/nvim"))
+        backup_if_exists(os.path.join(home_dir, ".local/state/nvim"))
+        backup_if_exists(os.path.join(home_dir, ".cache/nvim"))
+
         logging.info("Instalando Lazyvim...")
         subprocess.run(["git", "clone", repo_url, repo_path], check=True)
         logging.info("Lazyvim instalado correctamente")
