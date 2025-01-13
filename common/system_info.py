@@ -14,6 +14,8 @@ class SystemInfo:
         self.update_command = None
         self.install_command = None
         self.repositories = None
+        self.dependencies_core = None
+        self.dependencies_extended = None
 
         if self.system == "linux":
             self._detect_linux_distribution()
@@ -78,6 +80,53 @@ class SystemInfo:
                         "--from-repofile=https://download.docker.com/linux/fedora/docker-ce.repo",
                     ],
                 },
+                "dependencies": {
+                    "core": [
+                        "git",
+                        "curl",
+                        "wget",
+                        "gcc",
+                        "make",
+                        "unzip",
+                        "zsh",
+                        "golang",
+                        "cargo",
+                        "g++",
+                        "python3",
+                        "ruby",
+                        "unrar",
+                        "p7zip",
+                        "p7zip-plugins",
+                    ],
+                    "extended": [
+                        "ripgrep",
+                        "fd-find",
+                        "neovim",
+                        "fastfetch",
+                        "util-linux-user",
+                        "anacron",
+                        "neovim",
+                        "python3-neovim",
+                        "kitty",
+                        "lua-devel",
+                        "luarocks",
+                        "docker-ce",
+                        "docker-ce-cli",
+                        "containerd.io",
+                        "docker-compose-plugin",
+                        "bat",
+                        "fzf",
+                        "httpie",
+                        "ripgrep",
+                        "tmux",
+                        "htop",
+                        "proselint",
+                        "lm_sensors",
+                        "discord",
+                        "alacritty",
+                        "kde-connect",
+                    ],
+                },
             },
             "centos": {
                 "manager": "yum",
@@ -102,3 +151,7 @@ class SystemInfo:
             self.update_command = pm_info["update"]
             self.install_command = pm_info["install"]
             self.repositories = pm_info.get("repo", {})
+            self.dependencies_core = pm_info.get("dependencies", {}).get("core", [])
+            self.dependencies_extended = pm_info.get("dependencies", {}).get(
+                "extended", []
+            )

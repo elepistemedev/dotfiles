@@ -70,66 +70,32 @@ def update_system(system_info):
 
 def install_dependencies(system_info):
     """Instala las dependencias necesarias"""
-    dependencies = [
-        "git",
-        "curl",
-        "wget",
-        "gcc",
-        "make",
-        "ripgrep",
-        "fd-find",
-        "unzip",
-        "neovim",
-        "zsh",
-        "fastfetch",
-        "golang",
-        "util-linux-user",
-        "anacron",
-        "cargo",
-        "neovim",
-        "python3-neovim",
-        "kitty",
-        "g++",
-        "lua-devel",
-        "luarocks",
-        "docker-ce",
-        "docker-ce-cli",
-        "containerd.io",
-        "docker-compose-plugin",
-        "bat",
-        "fzf",
-        "httpie",
-        "ripgrep",
-        "tmux",
-        "ruby",
-        "python3",
-        "htop",
-        "proselint",
-        "lm_sensors",
-        "discord",
-        "alacritty",
-        "kde-connect",
-        "unrar",
-        "p7zip",
-        "p7zip-plugins",
-    ]
-
     if not system_info.install_command:
         logging.error("No se pudo determinar el comando de instalación")
         return False
 
+    if not system_info.dependencies_core:
+        logging.warning("No hay dependencias definidas para instalar")
+        return True
+
+    success = True
     try:
-        for dep in dependencies:
-            logging.info(f"Instalando {dep}...")
-            cmd = system_info.install_command + [dep]
+        for package, details in system_info.dependencies_core.items():
+            logging.info(f"Instalando {package}...")
+            cmd = system_info.install_command + [package]
             result = subprocess.run(cmd, capture_output=True, text=True)
 
             if result.returncode != 0:
-                logging.error(f"Error instalando {dep}: {result.stderr}")
-                return False
+                logging.error(f"Error instalando {package}: {result.stderr}")
+                success = False
+                continue  # Continúa con el siguiente paquete aunque este haya fallado
 
-        logging.info("Todas las dependencias fueron instaladas correctamente")
-        return True
+        if success:
+            logging.info("Todas las dependencias fueron instaladas correctamente")
+        else:
+            logging.warning("Algunas dependencias no pudieron ser instaladas")
+
+        return success
     except Exception as e:
         logging.error(f"Error instalando dependencias: {str(e)}")
         return False
