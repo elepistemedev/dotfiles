@@ -19,7 +19,7 @@ def update_system(system_info):
             logging.info("No hay repositorios para configurar.")
         else:
             for repo_command in system_info.repositories:
-                logging.warning(f"añadiendo repositorio: {' '.join(repo_command)}")
+                logging.warning(f"añadiendo repositorio:\n{' '.join(repo_command)}")
                 result = subprocess.run(
                     repo_command,
                     capture_output=True,
@@ -63,7 +63,6 @@ def install_dependencies(system_info):
         "wget",
         "gcc",
         "make",
-        "git",
         "ripgrep",
         "fd-find",
         "unzip",
@@ -334,18 +333,31 @@ def install_lazyvim():
 
 def configurar_docker():
     """Configurando Docker"""
-    try:
-        logging.info("Configurando Docker...")
-        user_name = os.getenv("USER")
-        subprocess.run("sudo groupadd docker", shell=True, check=True)
-        subprocess.run(f"sudo usermod -aG docker {user_name}", shell=True, check=True)
-        subprocess.run("sudo systemctl enable docker.service", shell=True, check=True)
-        subprocess.run(
-            "sudo systemctl enable containerd.service", shell=True, check=True
-        )
-        subprocess.run("sudo systemctl start docker", shell=True, check=True)
-        logging.info("Docker Configurado correctamente")
-        return True
-    except Exception as e:
-        logging.error(f"Error instalando Lazyvim: {str(e)}")
-        return False
+    user_name = os.getenv("USER")
+    success = True
+
+    commands = [
+        ("sudo groupadd docker", "Creando grupo docker"),
+        (f"sudo usermod -aG docker {user_name}", "Agregando usuario al grupo docker"),
+        ("sudo systemctl enable docker.service", "Habilitando servicio docker"),
+        ("sudo systemctl enable containerd.service", "Habilitando servicio containerd"),
+        ("sudo systemctl start docker", "Iniciando servicio docker"),
+    ]
+
+    logging.info("Configurando Docker...")
+
+    for cmd, description in commands:
+        try:
+            subprocess.run(cmd, shell=True, check=True)
+            logging.info(f"✓ {description}")
+        except Exception as e:
+            logging.error(f"✗ Error en {description}: {str(e)}")
+            success = False
+            continue
+
+    if success:
+        logging.info("Docker configurado correctamente")
+    else:
+        logging.warning("Docker configurado con algunos errores")
+
+    return success
