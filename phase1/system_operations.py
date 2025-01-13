@@ -18,23 +18,35 @@ def update_system(system_info):
         if not system_info.repositories:
             logging.info("No hay repositorios para configurar.")
         else:
-            for repo_command in system_info.repositories:
-                logging.warning(f"añadiendo repositorio:\n{' '.join(repo_command)}")
-                result = subprocess.run(
-                    repo_command,
-                    capture_output=True,
-                    text=True,
-                    input="y\n",
-                    check=True,
+            for repo_name, repo_command in system_info.repositories.items():
+                logging.warning(
+                    f"Añadiendo repositorio {repo_name}:\n{' '.join(repo_command)}"
                 )
-
-                if result.returncode == 0 or (
-                    system_info.package_manager in ["dnf", "yum"]
-                    and result.returncode == 100
-                ):
-                    logging.info("Repositorio configurado correctamente")
-                else:
-                    logging.error(f"Error configurando repositorio: {result.stderr}")
+                try:
+                    result = subprocess.run(
+                        repo_command,
+                        capture_output=True,
+                        text=True,
+                        input="y\n",
+                        check=True,
+                    )
+                    # DNF puede retornar 100 cuando no hay actualizaciones disponibles
+                    if result.returncode == 0 or (
+                        system_info.package_manager in ["dnf", "yum"]
+                        and result.returncode == 100
+                    ):
+                        logging.info(
+                            f"Repositorio {repo_name} configurado correctamente"
+                        )
+                    else:
+                        logging.error(
+                            f"Error configurando repositorio {repo_name}: {result.stderr}"
+                        )
+                        return False
+                except subprocess.CalledProcessError as e:
+                    logging.error(
+                        f"Error ejecutando comando para repositorio {repo_name}: {e.stderr}"
+                    )
                     return False
 
         logging.info(f"Actualizando el sistema usando {system_info.package_manager}...")
@@ -359,5 +371,32 @@ def configurar_docker():
         logging.info("Docker configurado correctamente")
     else:
         logging.warning("Docker configurado con algunos errores")
+
+    return success
+
+
+def install_luacheck():
+    """Instalando install_luacheckk"""
+    success = True
+
+    commands = [
+        ("sudo luarocks install luacheck", "luacheck"),
+    ]
+
+    logging.info("Instalando luacheck...")
+
+    for cmd, description in commands:
+        try:
+            subprocess.run(cmd, shell=True, check=True)
+            logging.info(f"✓ Instalado {description}")
+        except Exception as e:
+            logging.error(f"✗ Error al instalar {description}: {str(e)}")
+            success = False
+            continue
+
+    if success:
+        logging.info("luackeck instalado correctamente")
+    else:
+        logging.warning("No se pudo instalar luacheck")
 
     return success

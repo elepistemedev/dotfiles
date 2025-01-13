@@ -63,21 +63,21 @@ class SystemInfo:
                 "manager": "dnf",
                 "update": ["sudo", "dnf", "check-update"],
                 "install": ["sudo", "dnf", "install", "-y"],
-                "repo": [
-                    [
+                "repo": {
+                    "rpmfusion": [
                         "sudo",
                         "dnf",
                         "install",
                         f"https://download1.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-{self.version}.noarch.rpm",
                     ],
-                    [
+                    "docker": [
                         "sudo",
                         "dnf",
                         "config-manager",
                         "addrepo",
                         "--from-repofile=https://download.docker.com/linux/fedora/docker-ce.repo",
                     ],
-                ],
+                },
             },
             "centos": {
                 "manager": "yum",
@@ -101,4 +101,4 @@ class SystemInfo:
             self.package_manager = pm_info["manager"]
             self.update_command = pm_info["update"]
             self.install_command = pm_info["install"]
-            self.repositories = pm_info.get("repo", [])
+            self.repositories = pm_info.get("repo", {})
