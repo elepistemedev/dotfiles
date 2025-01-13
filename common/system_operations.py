@@ -1,5 +1,5 @@
 import subprocess
-from common.logger_utils import setup_logger
+from .logger_utils import setup_logger
 import os
 from pathlib import Path
 import urllib.request
@@ -246,7 +246,7 @@ def setup_anaconda():
 
 def install_python_packages():
     """Instala los paquetes Python necesarios para la fase 2"""
-    packages = ["rich", "InquirerPy", "typer", "tqdm", "gitlint"]
+    packages = ["rich", "InquirerPy", "typer", "tqdm", "gitlint", "textual"]
     anaconda_pip = str(Path.home() / "anaconda3" / "bin" / "pip")
 
     try:
