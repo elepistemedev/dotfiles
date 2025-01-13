@@ -4,6 +4,7 @@ import os
 from pathlib import Path
 import urllib.request
 import sys
+from common.install_packages import install_packages
 
 logging = setup_logger()
 
@@ -245,7 +246,7 @@ def setup_anaconda():
 
 def install_python_packages():
     """Instala los paquetes Python necesarios para la fase 2"""
-    packages = ["rich", "questionary", "typer", "tqdm", "gitlint"]
+    packages = ["rich", "InquirerPy", "typer", "tqdm", "gitlint"]
     anaconda_pip = str(Path.home() / "anaconda3" / "bin" / "pip")
 
     try:
@@ -346,7 +347,6 @@ def install_lazyvim():
 def configurar_docker():
     """Configurando Docker"""
     user_name = os.getenv("USER")
-    success = True
 
     commands = [
         ("sudo groupadd docker", "Creando grupo docker"),
@@ -356,48 +356,27 @@ def configurar_docker():
         ("sudo systemctl start docker", "Iniciando servicio docker"),
     ]
 
-    logging.info("Configurando Docker...")
-
-    for cmd, description in commands:
-        try:
-            subprocess.run(cmd, shell=True, check=True)
-            logging.info(f"✓ {description}")
-        except Exception as e:
-            logging.error(f"✗ Error en {description}: {str(e)}")
-            success = False
-            continue
-
-    if success:
-        logging.info("Docker configurado correctamente")
-    else:
-        logging.warning("Docker configurado con algunos errores")
-
-    return success
+    return install_packages(
+        commands,
+        start_message="Configurando Docker...",
+        success_message="Docker configurado correctamente",
+        error_message="Docker configurado con algunos errores",
+    )
 
 
-def install_luacheck():
-    """Instalando install_luacheckk"""
-    success = True
+def install_luapack():
+    """Instalando luacheck y stylua con la función generalizada de instalación."""
 
+    # Definir los comandos y descripciones para la instalación
     commands = [
         ("sudo luarocks install luacheck", "luacheck"),
         ("cargo install stylua", "stylua"),
     ]
 
-    logging.info("Instalando Paquetes para lua...")
-
-    for cmd, description in commands:
-        try:
-            subprocess.run(cmd, shell=True, check=True)
-            logging.info(f"✓ Instalado {description}")
-        except Exception as e:
-            logging.error(f"✗ Error al instalar {description}: {str(e)}")
-            success = False
-            continue
-
-    if success:
-        logging.info("Paquetes Lua Instalados correctamente")
-    else:
-        logging.warning("Se instalaron los paquetes Lua con algunos errores")
-
-    return success
+    # Llamar a la función del módulo para instalar los paquetes
+    return install_packages(
+        commands,
+        start_message="Instalando Paquetes para Lua...",
+        success_message="Paquetes Lua instalados correctamente.",
+        error_message="Se instalaron los paquetes Lua con algunos errores",
+    )

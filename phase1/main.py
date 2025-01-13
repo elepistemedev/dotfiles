@@ -1,6 +1,6 @@
 from common.logger_utils import setup_logger
 from common.system_info import SystemInfo
-from system_operations import (
+from common.system_operations import (
     update_system,
     install_dependencies,
     install_and_configure_zsh,
@@ -10,6 +10,7 @@ from system_operations import (
     install_prompt,
     install_lazyvim,
     configurar_docker,
+    install_luapack,
 )
 from common.logo import show as logo
 
@@ -73,6 +74,10 @@ def main():
 
     # 10. Configurar Docker
     if not configurar_docker():
+        logger.error("No se pudo configurar Docker")
+
+    # 11. Instalando paquetes para Lua
+    if not install_luapack():
         logger.error("No se pudo configurar Docker")
 
     logo("🎉 Fase 1 completada exitosamente")
