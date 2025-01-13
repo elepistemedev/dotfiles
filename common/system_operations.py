@@ -3,8 +3,10 @@ from .logger_utils import setup_logger
 import os
 from pathlib import Path
 import urllib.request
+from urllib.error import URLError
 import sys
 from common.install_packages import install_packages
+import zipfile
 
 logging = setup_logger()
 
@@ -346,3 +348,70 @@ def install_luapack():
         success_message="Paquetes Lua instalados correctamente.",
         error_message="Se instalaron los paquetes Lua con algunos errores",
     )
+
+
+def install_nerd_fonts():
+    """
+    Instala las fuentes Meslo y JetBrains Mono Nerd Fonts en el sistema.
+    Requiere permisos de sudo para la instalación de fontconfig.
+    """
+    logger = setup_logger()
+
+    try:
+        # Instalar fontconfig
+        logger.info("Instalando fontconfig...")
+        subprocess.run(["sudo", "dnf", "-y", "install", "fontconfig"], check=True)
+
+        # Definir URLs y rutas
+        home_dir = str(Path.home())
+        fonts_dir = os.path.join(home_dir, ".local", "share", "fonts")
+        urls = {
+            "Meslo.zip": "https://github.com/ryanoasis/nerd-fonts/releases/download/v3.3.0/Meslo.zip",
+            "JetBrainsMono.zip": "https://github.com/ryanoasis/nerd-fonts/releases/download/v3.3.0/JetBrainsMono.zip",
+        }
+
+        # Crear directorio de fuentes si no existe
+        os.makedirs(fonts_dir, exist_ok=True)
+        logger.info(f"Directorio de fuentes creado/verificado: {fonts_dir}")
+
+        # Descargar e instalar cada fuente
+        for filename, url in urls.items():
+            zip_path = os.path.join(home_dir, filename)
+
+            # Descargar archivo
+            logger.info(f"Descargando {filename}...")
+            urllib.request.urlretrieve(url, zip_path)
+
+            # Descomprimir archivo
+            logger.info(f"Descomprimiendo {filename}...")
+            with zipfile.ZipFile(zip_path, "r") as zip_ref:
+                zip_ref.extractall(fonts_dir)
+
+            # Eliminar archivo zip
+            os.remove(zip_path)
+            logger.info(f"Archivo {filename} eliminado")
+
+        # Eliminar archivos de Windows
+        logger.info("Eliminando archivos de Windows...")
+        for file in os.listdir(fonts_dir):
+            if "Windows" in file:
+                os.remove(os.path.join(fonts_dir, file))
+                logger.info(f"Archivo eliminado: {file}")
+
+        # Actualizar cache de fuentes
+        logger.info("Actualizando cache de fuentes...")
+        subprocess.run(["fc-cache", "-fv"], check=True)
+
+        logger.info("Instalación completada exitosamente!")
+        return True
+
+    except subprocess.CalledProcessError as e:
+        logger.error(f"Error ejecutando comando: {e}")
+        return False
+    # except urllib.error.URLError as e:
+    except URLError as e:
+        logger.error(f"Error descargando archivos: {e}")
+        return False
+    except Exception as e:
+        logger.error(f"Error inesperado: {e}")
+        return False

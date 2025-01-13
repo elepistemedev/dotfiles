@@ -9,7 +9,7 @@ from common.system_operations import (
     install_python_packages,
     install_prompt,
     install_lazyvim,
-    configurar_docker,
+    install_fonts,
     install_luapack,
 )
 from common.logo import show as logo
@@ -67,14 +67,14 @@ def main():
 
     # WARNING: Falta instalar Node (por alguna razón ya se instala)
 
-    # 9. Instalar Cargo
+    # 9. Instalar Lazyvim
     if not install_lazyvim():
         logger.error("No se pudo instalar Lazyvim")
         return
 
-    # 10. Configurar Docker
-    if not configurar_docker():
-        logger.error("No se pudo configurar Docker")
+    # 10. instalar fuentes
+    if not install_fonts():
+        logger.error("No se pudo instalar las fuentes")
 
     # 11. Instalando paquetes para Lua
     if not install_luapack():

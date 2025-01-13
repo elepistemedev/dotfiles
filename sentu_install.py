@@ -93,18 +93,18 @@ def main():
         # Paso 1: Descargar y extraer el repositorio
         extracted_path = download_and_extract(REPO_URL, temp_dir)
 
-        # Paso 2: Ejecutar la primera fase
-        execute_phase1(extracted_path)
-
-        # temp_dir = Path("/ruta/al/directorio/temporal")  # Cambia por tu ruta
-        anaconda_path = Path.home() / "anaconda3"
-        conda_path = (
-            f"{str(anaconda_path)}/bin"  # Cambia según la instalación de Anaconda
-        )
-        env_name = "base"  # Nombre del entorno creado en la Fase 1
-
-        # Ejecutar la Fase 2
-        execute_phase2(temp_dir, conda_path, env_name)
+        # # Paso 2: Ejecutar la primera fase
+        # execute_phase1(extracted_path)
+        #
+        # # temp_dir = Path("/ruta/al/directorio/temporal")  # Cambia por tu ruta
+        # anaconda_path = Path.home() / "anaconda3"
+        # conda_path = (
+        #     f"{str(anaconda_path)}/bin"  # Cambia según la instalación de Anaconda
+        # )
+        # env_name = "base"  # Nombre del entorno creado en la Fase 1
+        #
+        # # Ejecutar la Fase 2
+        # execute_phase2(temp_dir, conda_path, env_name)
 
     finally:
         # Limpieza del directorio temporal
