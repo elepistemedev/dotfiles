@@ -76,9 +76,9 @@ def main():
     if not install_fonts():
         logger.error("No se pudo instalar las fuentes")
 
-    # 11. Instalando paquetes para Lua
-    if not install_luapack():
-        logger.error("No se pudo configurar Docker")
+    # # 11. Instalando paquetes para Lua
+    # if not install_luapack():
+    #     logger.error("No se pudo instalar paquetes para Lua")
 
     logo("🎉 Fase 1 completada exitosamente")
 
