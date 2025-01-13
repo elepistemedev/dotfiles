@@ -22,10 +22,12 @@ def main():
 
     # 1. Detectar sistema operativo
     system_info = SystemInfo()
-    logger.info(f"Sistema detectado: {system_info.system}")
+    logger.warning(f"Sistema detectado: {system_info.system}")
     if system_info.distribution:
-        logger.info(f"Distribución: {system_info.distribution} {system_info.version}")
-        logger.info(f"Gestor de paquetes: {system_info.package_manager}")
+        logger.warning(
+            f"Distribución: {system_info.distribution} {system_info.version}"
+        )
+        logger.warning(f"Gestor de paquetes: {system_info.package_manager}")
 
     # 2. Actualizar sistema
     if not update_system(system_info):
