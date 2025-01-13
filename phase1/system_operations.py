@@ -381,9 +381,10 @@ def install_luacheck():
 
     commands = [
         ("sudo luarocks install luacheck", "luacheck"),
+        ("cargo install stylua", "stylua"),
     ]
 
-    logging.info("Instalando luacheck...")
+    logging.info("Instalando Paquetes para lua...")
 
     for cmd, description in commands:
         try:
@@ -395,8 +396,8 @@ def install_luacheck():
             continue
 
     if success:
-        logging.info("luackeck instalado correctamente")
+        logging.info("Paquetes Lua Instalados correctamente")
     else:
-        logging.warning("No se pudo instalar luacheck")
+        logging.warning("Se instalaron los paquetes Lua con algunos errores")
 
     return success
