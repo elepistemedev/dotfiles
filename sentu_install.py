@@ -94,7 +94,7 @@ def main():
         extracted_path = download_and_extract(REPO_URL, temp_dir)
 
         # # Paso 2: Ejecutar la primera fase
-        # execute_phase1(extracted_path)
+        execute_phase1(extracted_path)
         #
         # # temp_dir = Path("/ruta/al/directorio/temporal")  # Cambia por tu ruta
         # anaconda_path = Path.home() / "anaconda3"
