@@ -350,7 +350,7 @@ def install_luapack():
     )
 
 
-def install_nerd_fonts():
+def install_fonts():
     """
     Instala las fuentes Meslo y JetBrains Mono Nerd Fonts en el sistema.
     Requiere permisos de sudo para la instalación de fontconfig.
