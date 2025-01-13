@@ -20,7 +20,13 @@ def update_system(system_info):
         else:
             for repo_command in system_info.repositories:
                 logging.warning(f"añadiendo repositorio: {' '.join(repo_command)}")
-                result = subprocess.run(repo_command, capture_output=True, text=True)
+                result = subprocess.run(
+                    repo_command,
+                    capture_output=True,
+                    text=True,
+                    input="y\n",
+                    check=True,
+                )
 
                 if result.returncode == 0 or (
                     system_info.package_manager in ["dnf", "yum"]
