@@ -13,6 +13,7 @@ class SystemInfo:
         self.package_manager = None
         self.update_command = None
         self.install_command = None
+        self.repositories = None
 
         if self.system == "linux":
             self._detect_linux_distribution()
@@ -62,6 +63,21 @@ class SystemInfo:
                 "manager": "dnf",
                 "update": ["sudo", "dnf", "check-update"],
                 "install": ["sudo", "dnf", "install", "-y"],
+                "repo": [
+                    [
+                        "sudo",
+                        "dnf",
+                        "install",
+                        "https://download1.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-$(rpm -E %fedora).noarch.rpm",
+                    ],
+                    [
+                        "sudo",
+                        "dnf",
+                        "config-manager",
+                        "--add-repo",
+                        "https://download.docker.com/linux/fedora/docker-ce.repo",
+                    ],
+                ],
             },
             "centos": {
                 "manager": "yum",
@@ -85,3 +101,4 @@ class SystemInfo:
             self.package_manager = pm_info["manager"]
             self.update_command = pm_info["update"]
             self.install_command = pm_info["install"]
+            self.repositories = pm_info.get("repo", [])

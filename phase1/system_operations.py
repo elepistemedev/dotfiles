@@ -15,6 +15,22 @@ def update_system(system_info):
         return False
 
     try:
+        if not system_info.repositories:
+            logging.info("No hay repositorios para configurar.")
+        else:
+            for repo_command in system_info.repositories:
+                logging.warning(f"añadiendo repositorio: {' '.join(repo_command)}")
+                result = subprocess.run(repo_command, capture_output=True, text=True)
+
+                if result.returncode == 0 or (
+                    system_info.package_manager in ["dnf", "yum"]
+                    and result.returncode == 100
+                ):
+                    logging.info("Repositorio configurado correctamente")
+                else:
+                    logging.error(f"Error configurando repositorio: {result.stderr}")
+                    return False
+
         logging.info(f"Actualizando el sistema usando {system_info.package_manager}...")
         result = subprocess.run(
             system_info.update_command, capture_output=True, text=True
