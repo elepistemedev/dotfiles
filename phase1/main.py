@@ -8,7 +8,8 @@ from system_operations import (
     setup_anaconda,
     install_python_packages,
     install_prompt,
-    install_cargo,
+    install_lazyvim,
+    configurar_docker,
 )
 from common.logo import show as logo
 
@@ -63,13 +64,14 @@ def main():
 
     # WARNING: Falta instalar Node (por alguna razón ya se instala)
 
-    # TODO: Falta instalar rust
-    # 10. Instalar Cargo
-    if not install_cargo():
-        logger.error("No se pudo instalar Cargo")
+    # 9. Instalar Cargo
+    if not install_lazyvim():
+        logger.error("No se pudo instalar Lazyvim")
         return
 
-    # TODO: Falta instalar go
+    # 10. Configurar Docker
+    if not configurar_docker():
+        logger.error("No se pudo configurar Docker")
 
     logo("🎉 Fase 1 completada exitosamente")
 

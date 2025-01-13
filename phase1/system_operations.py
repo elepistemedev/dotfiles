@@ -49,6 +49,33 @@ def install_dependencies(system_info):
         "zsh",
         "fastfetch",
         "golang",
+        "util-linux-user",
+        "anacron",
+        "cargo",
+        "cmus",
+        "neovim",
+        "python3-neovim",
+        "kitty",
+        "g++",
+        "lua-devel",
+        "luarocks",
+        "docker-ce",
+        "docker-ce-cli",
+        "containerd.io",
+        "docker-compose-plugin",
+        "bat",
+        "fzf",
+        "httpie",
+        "ripgrep",
+        "tmux",
+        "ruby",
+        "python3",
+        "htop",
+        "proselint",
+        "lm_sensors",
+        "discord",
+        "alacritty",
+        "kde-connect",
     ]
 
     if not system_info.install_command:
@@ -183,7 +210,7 @@ def setup_anaconda():
 
 def install_python_packages():
     """Instala los paquetes Python necesarios para la fase 2"""
-    packages = ["rich", "questionary", "typer", "tqdm"]
+    packages = ["rich", "questionary", "typer", "tqdm", "gitlint"]
     anaconda_pip = str(Path.home() / "anaconda3" / "bin" / "pip")
 
     try:
@@ -254,20 +281,41 @@ def install_fnm():
         return False
 
 
-def install_cargo():
-    """Instala Cargo"""
-    repo_url = "https://sh.rustup.rs"
+def install_lazyvim():
+    """Instalando Lazyvim"""
+    repo_url = "https://github.com/LazyVim/starter"
+    home_dir = str(Path.home())
+    repo_path = os.path.join(home_dir, ".config/nvim")
+    # Requerido
+    subprocess.run("mv ~/.config/nvim{,.bak}", shell=True, check=True)
+    # optional but recommended
+    subprocess.run("mv ~/.local/share/nvim{,.bak}", shell=True, check=True)
+    subprocess.run("mv ~/.local/state/nvim{,.bak}", shell=True, check=True)
+    subprocess.run("mv ~/.cache/nvim{,.bak}", shell=True, check=True)
     try:
-        logging.info("Instalando Cargo...")
-        # Obtener el contenido del script
-        curl_process = subprocess.run(
-            ["curl", "-sSf", repo_url], capture_output=True, text=True, check=True
-        )
-        # Ejecutar el script con sh
-        subprocess.run(["sh"], input=curl_process.stdout, text=True, check=True)
-
-        logging.info("Cargo instalado correctamente")
+        logging.info("Instalando Lazyvim...")
+        subprocess.run(["git", "clone", repo_url, repo_path], check=True)
+        logging.info("Lazyvim instalado correctamente")
         return True
     except Exception as e:
-        logging.error(f"Error instalando Cargo: {str(e)}")
+        logging.error(f"Error instalando Lazyvim: {str(e)}")
+        return False
+
+
+def configurar_docker():
+    """Configurando Docker"""
+    try:
+        logging.info("Configurando Docker...")
+        user_name = os.getenv("USER")
+        subprocess.run("sudo groupadd docker", shell=True, check=True)
+        subprocess.run(f"sudo usermod -aG docker {user_name}", shell=True, check=True)
+        subprocess.run("sudo systemctl enable docker.service", shell=True, check=True)
+        subprocess.run(
+            "sudo systemctl enable containerd.service", shell=True, check=True
+        )
+        subprocess.run("sudo systemctl start docker", shell=True, check=True)
+        logging.info("Docker Configurado correctamente")
+        return True
+    except Exception as e:
+        logging.error(f"Error instalando Lazyvim: {str(e)}")
         return False
