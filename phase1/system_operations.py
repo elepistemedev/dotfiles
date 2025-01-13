@@ -52,7 +52,6 @@ def install_dependencies(system_info):
         "util-linux-user",
         "anacron",
         "cargo",
-        "cmus",
         "neovim",
         "python3-neovim",
         "kitty",
@@ -76,6 +75,9 @@ def install_dependencies(system_info):
         "discord",
         "alacritty",
         "kde-connect",
+        "unrar",
+        "p7zip",
+        "p7zip-plugins",
     ]
 
     if not system_info.install_command:
