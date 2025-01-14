@@ -72,6 +72,8 @@ def main():
         logger.error("No se pudo instalar las fuentes")
 
     logo("🎉 Fase 1 completada exitosamente")
+    print("Recuerda reiniciar el terminal")
+    print("Te recuerdo configurar una fuente Nertfonts para mejor experiencia")
 
 
 if __name__ == "__main__":

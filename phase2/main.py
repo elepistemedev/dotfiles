@@ -80,7 +80,7 @@ def fase2():
         ]
     )
 
-    logo("🎉 Fase 1 completada exitosamente")
+    logo("🎉 Fase 2 completada exitosamente")
 
 
 def main():
