@@ -44,9 +44,11 @@ alias musica="ncmpcpp"
 alias ls='lsd -a --group-directories-first'
 alias ll='lsd -la --group-directories-first'
 
-alias clear='~/./.local/share/asciiart/SENTU'
+alias clear='~/.config/sentu/logo.sh'
 
 # alias sentu-data='cookiecutter https://github.com/SENTUstudio/cookiecutter-ciencia-datos --checkout main'
 
 # ▄▀█ █░█ ▀█▀ █▀█   █▀ ▀█▀ ▄▀█ █▀█ ▀█▀
 # █▀█ █▄█ ░█░ █▄█   ▄█ ░█░ █▀█ █▀▄ ░█░
+
+~/.config/sentu/logo.sh

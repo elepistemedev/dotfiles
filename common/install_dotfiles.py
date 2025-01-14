@@ -150,6 +150,7 @@ def install_dot(try_nvim=None):
         "zsh",
         "mpd",
         "paru",
+        "sentu",
     ]
 
     # Respaldar configuraciones existentes
