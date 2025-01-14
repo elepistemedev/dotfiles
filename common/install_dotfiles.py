@@ -6,6 +6,80 @@ import re
 from InquirerPy import inquirer
 from InquirerPy.utils import color_print
 
+# Colores para mensajes en terminal (para uso con color_print)
+COLORS = {
+    "verde": "#00FF00",
+    "amarillo": "#FFFF00",
+    "azul": "#0000FF",
+    "rojo": "#FF0000",
+}
+
+
+def get_xdg_update_path():
+    """Obtiene la ruta del comando xdg-user-dirs-update."""
+    possible_paths = [
+        "/usr/bin/xdg-user-dirs-update",
+        "/usr/local/bin/xdg-user-dirs-update",
+    ]
+
+    for path in possible_paths:
+        if os.path.exists(path):
+            return path
+    return None
+
+
+def setup_xdg_dirs():
+    """Configura los directorios XDG si es necesario."""
+    home = os.path.expanduser("~")
+    xdg_config_path = os.path.join(home, ".config", "user-dirs.dirs")
+
+    if not os.path.exists(xdg_config_path):
+        xdg_command = get_xdg_update_path()
+
+        if not xdg_command:
+            color_print(
+                [
+                    (
+                        "El comando xdg-user-dirs-update no está disponible en el sistema.\n",
+                        COLORS["amarillo"],
+                    ),
+                    (
+                        "Puede que necesite instalarlo con: sudo dnf install xdg-user-dirs\n",
+                        COLORS["azul"],
+                    ),
+                ]
+            )
+            return False
+
+        try:
+            result = subprocess.run(
+                [xdg_command],
+                capture_output=True,
+                text=True,
+            )
+
+            if result.returncode != 0:
+                color_print(
+                    [
+                        ("Error al ejecutar xdg-user-dirs-update: ", COLORS["rojo"]),
+                        (f"{result.stderr}\n", COLORS["amarillo"]),
+                    ]
+                )
+                return False
+
+            return True
+
+        except Exception as e:
+            color_print(
+                [
+                    ("Error al configurar directorios XDG: ", COLORS["rojo"]),
+                    (f"{str(e)}\n", COLORS["amarillo"]),
+                ]
+            )
+            return False
+
+    return True
+
 
 def install_dot(try_nvim=None):
     """
@@ -15,14 +89,6 @@ def install_dot(try_nvim=None):
         try_nvim (str, opcional): Si se debe instalar la configuración de nvim ('y' o 'n').
                                  Si es None, preguntará al usuario.
     """
-    # Colores para mensajes en terminal (para uso con color_print)
-    COLORS = {
-        "verde": "#00FF00",
-        "amarillo": "#FFFF00",
-        "azul": "#0000FF",
-        "rojo": "#FF0000",
-    }
-
     # Obtener fecha actual para carpetas de respaldo
     date = datetime.now().strftime("%Y%m%d-%H%M")
 
@@ -31,8 +97,8 @@ def install_dot(try_nvim=None):
     backup_folder = os.path.join(home, ".SENTUBackup")
 
     # Asegurar que los directorios XDG estén configurados
-    if not os.path.exists(os.path.join(home, ".config", "user-dirs.dirs")):
-        subprocess.run(["xdg-user-dirs-update"])
+    if not setup_xdg_dirs():
+        return  # Detener si no se pueden configurar los directorios XDG
 
     # Preguntar por la configuración de nvim si no se proporcionó
     if try_nvim is None:
@@ -69,6 +135,9 @@ def install_dot(try_nvim=None):
             )
         ]
     )
+
+    # El resto del código sigue igual...
+    # (Mantendremos la lógica para respaldar y copiar archivos)
 
     # Carpetas para respaldar
     config_folders = [

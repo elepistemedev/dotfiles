@@ -60,7 +60,6 @@ def fase2():
     color_print([("cyan", "⚡ Configurando Docker...")])
     if not configurar_docker():
         color_print([("red", "❌ No se pudo configurar Docker")])
-        return
     color_print([("green", "✓ Docker configurado correctamente")])
 
     # TODO: Faltan las post-instalaciones

@@ -97,6 +97,7 @@ class SystemInfo:
                         "unrar",
                         "p7zip",
                         "p7zip-plugins",
+                        "xdg-user-dirs",
                     ],
                     "extended": [
                         "ripgrep",
