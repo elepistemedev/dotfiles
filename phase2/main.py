@@ -29,7 +29,7 @@ def fase2():
 
     # 2. Actualizar sistema
     color_print([("cyan", "⚡ Actualizando sistema...")])
-    if not update_system(system_info):
+    if not update_system(system_info, use_repo=True):
         color_print([("red", "❌ No se pudo actualizar el sistema")])
         return
     color_print([("green", "✓ Sistema actualizado correctamente")])
