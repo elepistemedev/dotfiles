@@ -89,7 +89,8 @@ def main():
     # Procesar la elección del usuario
     if action == "Continuar con la Fase 2":
         print("Iniciando la Fase 2...")
-        # Aquí puedes llamar a las funciones de la Fase 2
+        color_print([("cyan", "⚡ Iniciando la Fase 2 de instalación...")])
+        fase2()
     else:
         print("Saliendo del instalador. ¡Hasta luego!")
         exit(0)
