@@ -9,6 +9,7 @@ from common.system_operations import (
     install_luapack,
 )
 from InquirerPy.utils import color_print
+from common.install_dotfiles import install_dot
 
 
 def fase2():
@@ -62,6 +63,13 @@ def fase2():
         return
     color_print([("green", "✓ Docker configurado correctamente")])
 
+    # 99. Instalar dotfiles
+    color_print([("cyan", "⚡ Instalando dotfiles...")])
+    if not install_dot():
+        color_print([("red", "❌ No se pudo instalar dotfiles")])
+        return
+    color_print([("green", "✓ dotfiles instalados correctamente")])
+
     # Mensaje final de éxito
     color_print(
         [
@@ -71,6 +79,8 @@ def fase2():
             )
         ]
     )
+
+    logo("🎉 Fase 1 completada exitosamente")
 
 
 def main():
