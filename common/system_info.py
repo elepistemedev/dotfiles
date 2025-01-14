@@ -86,13 +86,6 @@ class SystemInfo:
                         "-y",
                         "https://dl.google.com/linux/direct/google-chrome-stable_current_x86_64.rpm",
                     ],
-                    "flatpak": [
-                        "flatpak",
-                        "remote-add",
-                        "--if-not-exists",
-                        "flathub",
-                        "https://dl.flathub.org/repo/flathub.flatpakrepo",
-                    ],
                 },
                 "dependencies": {
                     "core": [
