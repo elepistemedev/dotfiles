@@ -36,7 +36,7 @@ def fase2():
 
     # 3. Instalar dependencias básicas
     color_print([("cyan", "⚡ Instalando dependencias básicas...")])
-    if not install_dependencies(system_info):
+    if not install_dependencies(system_info, use_extended=True):
         color_print([("red", "❌ No se pudieron instalar las dependencias")])
         return
     color_print([("green", "✓ Dependencias instaladas correctamente")])
