@@ -7,12 +7,6 @@ from InquirerPy import inquirer
 from InquirerPy.utils import color_print
 
 # Colores para mensajes en terminal (para uso con color_print)
-COLORS = {
-    "verde": "#00FF00",
-    "amarillo": "#FFFF00",
-    "azul": "#0000FF",
-    "rojo": "#FF0000",
-}
 
 
 def get_xdg_update_path():
@@ -40,12 +34,12 @@ def setup_xdg_dirs():
             color_print(
                 [
                     (
+                        "yellow",
                         "El comando xdg-user-dirs-update no está disponible en el sistema.\n",
-                        COLORS["amarillo"],
                     ),
                     (
+                        "cyan",
                         "Puede que necesite instalarlo con: sudo dnf install xdg-user-dirs\n",
-                        COLORS["azul"],
                     ),
                 ]
             )
@@ -61,8 +55,8 @@ def setup_xdg_dirs():
             if result.returncode != 0:
                 color_print(
                     [
-                        ("Error al ejecutar xdg-user-dirs-update: ", COLORS["rojo"]),
-                        (f"{result.stderr}\n", COLORS["amarillo"]),
+                        ("red", "Error al ejecutar xdg-user-dirs-update: "),
+                        ("yellow", f"{result.stderr}\n"),
                     ]
                 )
                 return False
@@ -72,8 +66,8 @@ def setup_xdg_dirs():
         except Exception as e:
             color_print(
                 [
-                    ("Error al configurar directorios XDG: ", COLORS["rojo"]),
-                    (f"{str(e)}\n", COLORS["amarillo"]),
+                    ("red", "Error al configurar directorios XDG: "),
+                    ("yellow", f"{str(e)}\n"),
                 ]
             )
             return False
@@ -105,16 +99,16 @@ def install_dot(try_nvim=None):
         color_print(
             [
                 (
+                    "yellow",
                     "Si ya tienes una configuración NEOVIM potente y súper Pro, escribe 'n' en la siguiente pregunta.\n",
-                    COLORS["amarillo"],
                 )
             ]
         )
         color_print(
             [
                 (
+                    "yellow",
                     "Si respondes 'y', tu configuración de neovim se moverá al directorio de respaldo.\n",
-                    COLORS["amarillo"],
                 )
             ]
         )
@@ -130,8 +124,8 @@ def install_dot(try_nvim=None):
     color_print(
         [
             (
+                "cyan",
                 f"Los archivos de respaldo se almacenarán en {backup_folder}\n",
-                COLORS["verde"],
             )
         ]
     )
@@ -167,25 +161,25 @@ def install_dot(try_nvim=None):
                 shutil.move(folder_path, backup_path)
                 color_print(
                     [
-                        (f"{folder}", COLORS["amarillo"]),
-                        (" carpeta respaldada exitosamente en ", COLORS["verde"]),
-                        (f"{backup_path}\n", COLORS["azul"]),
+                        ("yellow", f"{folder}"),
+                        ("cyan", "carpeta respaldada exitosamente en "),
+                        ("cyan", f"{backup_path}\n"),
                     ]
                 )
             except Exception as e:
                 color_print(
                     [
                         (
+                            "red",
                             f"No se pudo respaldar la carpeta {folder}. Error: {str(e)}\n",
-                            COLORS["rojo"],
                         )
                     ]
                 )
         else:
             color_print(
                 [
-                    (f"{folder}", COLORS["amarillo"]),
-                    (" carpeta no existe, no se necesita respaldo\n", COLORS["verde"]),
+                    ("yellow", f"{folder}"),
+                    ("cyan", " carpeta no existe, no se necesita respaldo\n"),
                 ]
             )
 
@@ -198,23 +192,21 @@ def install_dot(try_nvim=None):
                 shutil.move(nvim_path, backup_path)
                 color_print(
                     [
-                        ("Carpeta nvim respaldada exitosamente en ", COLORS["verde"]),
-                        (f"{backup_path}\n", COLORS["azul"]),
+                        ("cyan", "Carpeta nvim respaldada exitosamente en "),
+                        ("cyan", f"{backup_path}\n"),
                     ]
                 )
             except Exception as e:
                 color_print(
                     [
                         (
+                            "red",
                             f"No se pudo respaldar la carpeta nvim. Error: {str(e)}\n",
-                            COLORS["rojo"],
                         )
                     ]
                 )
         else:
-            color_print(
-                [("Carpeta nvim no existe, no se necesita respaldo\n", COLORS["verde"])]
-            )
+            color_print([("cyan", "Carpeta nvim no existe, no se necesita respaldo\n")])
 
     # Respaldar configuraciones de Firefox
     firefox_profile = None
@@ -235,18 +227,18 @@ def install_dot(try_nvim=None):
                     color_print(
                         [
                             (
+                                "cyan",
                                 "Carpeta Chrome respaldada exitosamente en ",
-                                COLORS["verde"],
                             ),
-                            (f"{backup_path}\n", COLORS["azul"]),
+                            ("cyan", f"{backup_path}\n"),
                         ]
                     )
                 except Exception as e:
                     color_print(
                         [
                             (
+                                "red",
                                 f"No se pudo respaldar la carpeta Chrome. Error: {str(e)}\n",
-                                COLORS["rojo"],
                             )
                         ]
                     )
@@ -260,18 +252,18 @@ def install_dot(try_nvim=None):
                     color_print(
                         [
                             (
+                                "cyan",
                                 "Archivo user.js respaldado exitosamente en ",
-                                COLORS["verde"],
                             ),
-                            (f"{backup_path}\n", COLORS["azul"]),
+                            ("cyan", f"{backup_path}\n"),
                         ]
                     )
                 except Exception as e:
                     color_print(
                         [
                             (
+                                "red",
                                 f"No se pudo respaldar el archivo user.js. Error: {str(e)}\n",
-                                COLORS["rojo"],
                             )
                         ]
                     )
@@ -284,21 +276,21 @@ def install_dot(try_nvim=None):
             shutil.move(zshrc_path, backup_path)
             color_print(
                 [
-                    ("Archivo .zshrc respaldado exitosamente en ", COLORS["verde"]),
-                    (f"{backup_path}\n", COLORS["azul"]),
+                    ("cyan", "Archivo .zshrc respaldado exitosamente en "),
+                    ("cyan", f"{backup_path}\n"),
                 ]
             )
         except Exception as e:
             color_print(
                 [
                     (
+                        "red",
                         f"No se pudo respaldar el archivo .zshrc. Error: {str(e)}\n",
-                        COLORS["rojo"],
                     )
                 ]
             )
 
-    color_print([("¡Respaldo Completado!\n", COLORS["verde"])])
+    color_print([("cyan", "¡Respaldo Completado!\n")])
 
     # Crear directorios necesarios
     os.makedirs(os.path.join(home, ".config"), exist_ok=True)
@@ -321,16 +313,16 @@ def install_dot(try_nvim=None):
             )
             color_print(
                 [
-                    (f"{item}", COLORS["amarillo"]),
-                    (" configuración instalada exitosamente\n", COLORS["verde"]),
+                    ("yellow", f"{item}"),
+                    ("cyan", " configuración instalada exitosamente\n"),
                 ]
             )
         except Exception as e:
             color_print(
                 [
                     (
+                        "red",
                         f"No se pudo instalar la configuración de {item}. Error: {str(e)}\n",
-                        COLORS["rojo"],
                     )
                 ]
             )
@@ -346,16 +338,16 @@ def install_dot(try_nvim=None):
             )
             color_print(
                 [
-                    (f"{folder}", COLORS["amarillo"]),
-                    (" carpeta copiada exitosamente!\n", COLORS["verde"]),
+                    ("yellow", f"{folder}"),
+                    ("cyan", " carpeta copiada exitosamente!\n"),
                 ]
             )
         except Exception as e:
             color_print(
                 [
                     (
+                        "red",
                         f"No se pudo copiar la carpeta {folder}. Error: {str(e)}\n",
-                        COLORS["rojo"],
                     )
                 ]
             )
@@ -367,11 +359,9 @@ def install_dot(try_nvim=None):
             os.path.join(home, ".local", "bin"),
             dirs_exist_ok=True,
         )
-        color_print([("Carpeta bin copiada exitosamente!\n", COLORS["verde"])])
+        color_print([("cyan", "Carpeta bin copiada exitosamente!\n")])
     except Exception as e:
-        color_print(
-            [(f"No se pudo copiar la carpeta bin. Error: {str(e)}\n", COLORS["rojo"])]
-        )
+        color_print([("red", f"No se pudo copiar la carpeta bin. Error: {str(e)}\n")])
 
     # Copiar tema de Firefox si existe el perfil
     if firefox_profile:
@@ -385,13 +375,13 @@ def install_dot(try_nvim=None):
                     shutil.copy2(src_path, dst_path)
                 else:
                     shutil.copytree(src_path, dst_path, dirs_exist_ok=True)
-            color_print([("¡Tema de Firefox copiado exitosamente!\n", COLORS["verde"])])
+            color_print([("cyan", "¡Tema de Firefox copiado exitosamente!\n")])
         except Exception as e:
             color_print(
                 [
                     (
+                        "red",
                         f"No se pudo copiar el tema de Firefox. Error: {str(e)}\n",
-                        COLORS["rojo"],
                     )
                 ]
             )
@@ -424,7 +414,7 @@ def install_dot(try_nvim=None):
             os.path.join(dotfiles_path, "home", ".zshrc"), os.path.join(home, ".zshrc")
         )
     except Exception as e:
-        color_print([(f"No se pudo copiar .zshrc. Error: {str(e)}\n", COLORS["rojo"])])
+        color_print([("red", f"No se pudo copiar .zshrc. Error: {str(e)}\n")])
 
     # Actualizar cache de fuentes
     try:
@@ -433,13 +423,13 @@ def install_dot(try_nvim=None):
         color_print(
             [
                 (
+                    "red",
                     f"No se pudo actualizar el cache de fuentes. Error: {str(e)}\n",
-                    COLORS["rojo"],
                 )
             ]
         )
 
-    color_print([("\n¡Archivos copiados exitosamente!\n", COLORS["verde"])])
+    color_print([("cyan", "\n¡Archivos copiados exitosamente!\n")])
 
 
 if __name__ == "__main__":
