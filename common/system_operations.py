@@ -465,3 +465,26 @@ def install_lazygit():
     except Exception as e:
         logging.error(f"Error instalando el prompt Starship: {str(e)}")
         return False
+
+
+# TODO: Fase 2
+def install_post_install():
+    """Post instalación"""
+
+    commands = [
+        ("go install oss.terrastruct.com/d2@latest", "Instalando d2 diagram"),
+        ("curl -fsS https://dl.brave.com/install.sh | sh", "Instalando Brave"),
+        (
+            "git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm",
+            "Configurando tmux",
+        ),
+        ("tmux source ~/.tmux.conf", "activando tmux"),
+        ("gem install tmuxinator", "instalando tmuxinator"),
+    ]
+
+    return install_packages(
+        commands,
+        start_message="Ejecutando post-instalación...",
+        success_message="Post-instalación ejecutada correctamente",
+        error_message="La post-instalación se ejecutó con algunos errores",
+    )

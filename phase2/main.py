@@ -8,6 +8,7 @@ from common.system_operations import (
     configurar_docker,
     install_luapack,
     install_lazygit,
+    install_post_install,
 )
 from InquirerPy.utils import color_print
 from common.install_dotfiles import install_dot
@@ -68,6 +69,12 @@ def fase2():
     if not install_lazygit():
         color_print([("red", "❌ No se pudo Instalar Lazygit")])
     color_print([("green", "✓ Lazygit instalado correctamente")])
+
+    # 8. Instalar d2
+    color_print([("cyan", "⚡ Ejecutando post-instalaciones...")])
+    if not install_post_install():
+        color_print([("red", "❌ No se pudo ejecutar las post-instalaciones")])
+    color_print([("green", "✓ Las post-instalaciones se ejecutaron correctamente")])
 
     # TODO: Faltan las post-instalaciones
 
