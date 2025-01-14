@@ -11,46 +11,48 @@ import zipfile
 logging = setup_logger()
 
 
-def update_system(system_info):
+# 2. Actualizar sistema
+def update_system(system_info, use_repo=False):
     """Actualiza el sistema usando el gestor de paquetes correspondiente"""
     if not system_info.update_command:
         logging.error("No se pudo determinar el comando de actualización")
         return False
 
     try:
-        if not system_info.repositories:
-            logging.info("No hay repositorios para configurar.")
-        else:
-            for repo_name, repo_command in system_info.repositories.items():
-                logging.warning(
-                    f"Añadiendo repositorio {repo_name}:\n{' '.join(repo_command)}"
-                )
-                try:
-                    result = subprocess.run(
-                        repo_command,
-                        capture_output=True,
-                        text=True,
-                        input="y\n",
-                        check=True,
+        if use_repo:
+            if not system_info.repositories:
+                logging.info("No hay repositorios para configurar.")
+            else:
+                for repo_name, repo_command in system_info.repositories.items():
+                    logging.warning(
+                        f"Añadiendo repositorio {repo_name}:\n{' '.join(repo_command)}"
                     )
-                    # DNF puede retornar 100 cuando no hay actualizaciones disponibles
-                    if result.returncode == 0 or (
-                        system_info.package_manager in ["dnf", "yum"]
-                        and result.returncode == 100
-                    ):
-                        logging.info(
-                            f"Repositorio {repo_name} configurado correctamente"
+                    try:
+                        result = subprocess.run(
+                            repo_command,
+                            capture_output=True,
+                            text=True,
+                            input="y\n",
+                            check=True,
                         )
-                    else:
+                        # DNF puede retornar 100 cuando no hay actualizaciones disponibles
+                        if result.returncode == 0 or (
+                            system_info.package_manager in ["dnf", "yum"]
+                            and result.returncode == 100
+                        ):
+                            logging.info(
+                                f"Repositorio {repo_name} configurado correctamente"
+                            )
+                        else:
+                            logging.error(
+                                f"Error configurando repositorio {repo_name}: {result.stderr}"
+                            )
+                            return False
+                    except subprocess.CalledProcessError as e:
                         logging.error(
-                            f"Error configurando repositorio {repo_name}: {result.stderr}"
+                            f"Error ejecutando comando para repositorio {repo_name}: {e.stderr}"
                         )
                         return False
-                except subprocess.CalledProcessError as e:
-                    logging.error(
-                        f"Error ejecutando comando para repositorio {repo_name}: {e.stderr}"
-                    )
-                    return False
 
         logging.info(f"Actualizando el sistema usando {system_info.package_manager}...")
         result = subprocess.run(
@@ -70,19 +72,36 @@ def update_system(system_info):
         return False
 
 
-def install_dependencies(system_info):
-    """Instala las dependencias necesarias"""
+# 3 Instalar dependencias básicas
+def install_dependencies(system_info, use_extended=False):
+    """
+    Instala las dependencias necesarias del sistema
+
+    Args:
+        system_info: Objeto con la información del sistema
+        use_extended: Bool que indica si usar dependencies_extended en lugar de dependencies_core
+
+    Returns:
+        bool: True si la instalación fue exitosa, False en caso contrario
+    """
     if not system_info.install_command:
         logging.error("No se pudo determinar el comando de instalación")
         return False
 
-    if not system_info.dependencies_core:
+    # Seleccionar qué conjunto de dependencias usar
+    dependencies = (
+        system_info.dependencies_extended
+        if use_extended
+        else system_info.dependencies_core
+    )
+
+    if not dependencies:
         logging.warning("No hay dependencias definidas para instalar")
         return True
 
     success = True
     try:
-        for package in system_info.dependencies_core:
+        for package in dependencies:
             logging.info(f"Instalando {package}...")
             cmd = system_info.install_command + [package]
             result = subprocess.run(cmd, capture_output=True, text=True)
@@ -93,16 +112,21 @@ def install_dependencies(system_info):
                 continue  # Continúa con el siguiente paquete aunque este haya fallado
 
         if success:
-            logging.info("Todas las dependencias fueron instaladas correctamente")
+            dependency_type = "extendidas" if use_extended else "core"
+            logging.info(
+                f"Todas las dependencias {dependency_type} fueron instaladas correctamente"
+            )
         else:
             logging.warning("Algunas dependencias no pudieron ser instaladas")
 
         return success
+
     except Exception as e:
         logging.error(f"Error instalando dependencias: {str(e)}")
         return False
 
 
+# 4. Instalar y configurar zsh
 def install_and_configure_zsh():
     """Configurando zsh como shell por defecto"""
 
@@ -127,6 +151,7 @@ def install_and_configure_zsh():
         return False
 
 
+# 5. Clonar repositorio desde github
 def clone_repo():
     """Clona el repositorio desde github en la carpeta home del usuario"""
     repo_url = "https://github.com/elepistemedev/dotfiles.git"
@@ -143,6 +168,7 @@ def clone_repo():
         return False
 
 
+# 6. Instalar Anaconda
 def setup_anaconda():
     """Descarga e instala Anaconda"""
     anaconda_url = (
@@ -212,6 +238,7 @@ def setup_anaconda():
         return False
 
 
+# 7. Instalar paquetes Python necesarios
 def install_python_packages():
     """Instala los paquetes Python necesarios para la fase 2"""
     packages = ["rich", "InquirerPy", "typer", "tqdm", "gitlint", "textual"]
@@ -238,6 +265,7 @@ def install_python_packages():
         return False
 
 
+# 8. Instalar prompt Starship
 def install_prompt():
     """Instala el prompt starship"""
     anaconda_pip = str(Path.home() / "anaconda3" / "bin" / "conda")
@@ -260,6 +288,7 @@ def install_prompt():
         return False
 
 
+# WARNING: De alguna forma ya se instala Node
 def install_fnm():
     """Instala Fast Node Manager (fnm)"""
     repo_url = "https://fnm.vercel.app/install"
@@ -285,6 +314,7 @@ def install_fnm():
         return False
 
 
+# TODO: Fase 2
 def install_lazyvim():
     """Instalando Lazyvim"""
     repo_url = "https://github.com/LazyVim/starter"
@@ -312,6 +342,7 @@ def install_lazyvim():
         return False
 
 
+# TODO: Fase 2
 def configurar_docker():
     """Configurando Docker"""
     user_name = os.getenv("USER")
@@ -332,6 +363,7 @@ def configurar_docker():
     )
 
 
+# TODO: Fase 2
 def install_luapack():
     """Instalando luacheck y stylua con la función generalizada de instalación."""
 
@@ -350,6 +382,7 @@ def install_luapack():
     )
 
 
+# 9. instalar fuentes
 def install_fonts():
     """
     Instala las fuentes Meslo y JetBrains Mono Nerd Fonts en el sistema.

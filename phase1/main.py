@@ -67,18 +67,9 @@ def main():
 
     # WARNING: Falta instalar Node (por alguna razón ya se instala)
 
-    # 9. Instalar Lazyvim
-    if not install_lazyvim():
-        logger.error("No se pudo instalar Lazyvim")
-        return
-
-    # 10. instalar fuentes
+    # 9. instalar fuentes
     if not install_fonts():
         logger.error("No se pudo instalar las fuentes")
-
-    # # 11. Instalando paquetes para Lua
-    # if not install_luapack():
-    #     logger.error("No se pudo instalar paquetes para Lua")
 
     logo("🎉 Fase 1 completada exitosamente")
 
