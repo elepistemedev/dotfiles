@@ -98,6 +98,7 @@ class SystemInfo:
                         "p7zip",
                         "p7zip-plugins",
                         "xdg-user-dirs",
+                        "lsd",
                     ],
                     "extended": [
                         "ripgrep",
