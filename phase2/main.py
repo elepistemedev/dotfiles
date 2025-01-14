@@ -63,6 +63,8 @@ def fase2():
         return
     color_print([("green", "✓ Docker configurado correctamente")])
 
+    # TODO: Faltan las post-instalaciones
+
     # 99. Instalar dotfiles
     color_print([("cyan", "⚡ Instalando dotfiles...")])
     if not install_dot():

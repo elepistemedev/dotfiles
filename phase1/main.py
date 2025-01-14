@@ -71,6 +71,9 @@ def main():
     if not install_fonts():
         logger.error("No se pudo instalar las fuentes")
 
+    # TODO: agregar una rutina que temporalmente añada al ejecutable de la
+    # fase 2 en .zshrc
+
     logo("🎉 Fase 1 completada exitosamente")
     print("Recuerda reiniciar el terminal")
     print("Te recuerdo configurar una fuente Nertfonts para mejor experiencia")
