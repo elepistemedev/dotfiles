@@ -86,7 +86,7 @@ class SystemInfo:
                         "-y",
                         "https://dl.google.com/linux/direct/google-chrome-stable_current_x86_64.rpm",
                     ],
-                    "flatpack": [
+                    "flatpak": [
                         "flatpak",
                         "remote-add",
                         "--if-not-exists",
@@ -115,6 +115,7 @@ class SystemInfo:
                         "lsd",
                         "java",
                         "dnf-utils",
+                        "flatpak",
                     ],
                     "extended": [
                         "ripgrep",
