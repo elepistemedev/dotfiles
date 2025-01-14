@@ -448,3 +448,20 @@ def install_fonts():
     except Exception as e:
         logger.error(f"Error inesperado: {e}")
         return False
+
+
+# TODO: Fase 2
+def install_lazygit():
+    """Instala Lazygit"""
+    anaconda_pip = str(Path.home() / "anaconda3" / "bin" / "conda")
+    try:
+        logging.info("Instalando el prompt Starship...")
+        subprocess.run(
+            [anaconda_pip, "install", "-c", "conda-forge", "lazygit"], check=True
+        )
+
+        logging.info("Prompt Startship instalado correctamente")
+        return True
+    except Exception as e:
+        logging.error(f"Error instalando el prompt Starship: {str(e)}")
+        return False
