@@ -63,7 +63,7 @@ class SystemInfo:
             },
             "fedora": {
                 "manager": "dnf",
-                "update": ["sudo", "dnf", "check-update"],
+                "update": ["sudo", "dnf", "update"],
                 "install": ["sudo", "dnf", "install", "-y"],
                 "repo": {
                     "rpmfusion": [
@@ -86,6 +86,9 @@ class SystemInfo:
                         "-y",
                         "https://dl.google.com/linux/direct/google-chrome-stable_current_x86_64.rpm",
                     ],
+                    "lazygit": [
+                        "sudo", "dnf", "copr", "enable", "atim/lazygit", "-y"
+                    ]
                 },
                 "dependencies": {
                     "core": [
@@ -111,6 +114,7 @@ class SystemInfo:
                         "flatpak",
                     ],
                     "extended": [
+                        "lazygit",
                         "ripgrep",
                         "fd-find",
                         "neovim",
