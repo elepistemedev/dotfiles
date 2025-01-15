@@ -481,6 +481,8 @@ def install_post_install():
         ("tmux source ~/.tmux.conf", "activando tmux"),
         ("gem install tmuxinator", "instalando tmuxinator"),
         ("flatpak install flathub md.obsidian.Obsidian", "Instalando Obsidian"),
+        ("flatpak install flathub org.freedownloadmanager.Manager"),
+        "Instalando FDM",
     ]
 
     return install_packages(
