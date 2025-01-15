@@ -70,6 +70,7 @@ class SystemInfo:
                         "sudo",
                         "dnf",
                         "install",
+                        "-y",
                         f"https://download1.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-{self.version}.noarch.rpm",
                     ],
                     "docker": [
@@ -86,9 +87,7 @@ class SystemInfo:
                         "-y",
                         "https://dl.google.com/linux/direct/google-chrome-stable_current_x86_64.rpm",
                     ],
-                    "lazygit": [
-                        "sudo", "dnf", "copr", "enable", "atim/lazygit", "-y"
-                    ]
+                    "lazygit": ["sudo", "dnf", "copr", "enable", "atim/lazygit", "-y"],
                 },
                 "dependencies": {
                     "core": [
