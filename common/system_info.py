@@ -63,7 +63,7 @@ class SystemInfo:
             },
             "fedora": {
                 "manager": "dnf",
-                "update": ["sudo", "dnf", "update"],
+                "update": ["sudo", "dnf", "update", "-y"],
                 "install": ["sudo", "dnf", "install", "-y"],
                 "repo": {
                     "rpmfusion": [
