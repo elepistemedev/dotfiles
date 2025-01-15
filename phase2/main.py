@@ -64,11 +64,11 @@ def fase2():
         color_print([("red", "❌ No se pudo configurar Docker")])
     color_print([("green", "✓ Docker configurado correctamente")])
 
-    # 7. Instalar Lazygit
-    color_print([("cyan", "⚡ Instalando Lazygit...")])
-    if not install_lazygit():
-        color_print([("red", "❌ No se pudo Instalar Lazygit")])
-    color_print([("green", "✓ Lazygit instalado correctamente")])
+    # # 7. Instalar Lazygit
+    # color_print([("cyan", "⚡ Instalando Lazygit...")])
+    # if not install_lazygit():
+    #     color_print([("red", "❌ No se pudo Instalar Lazygit")])
+    # color_print([("green", "✓ Lazygit instalado correctamente")])
 
     # 8. Instalar d2
     color_print([("cyan", "⚡ Ejecutando post-instalaciones...")])

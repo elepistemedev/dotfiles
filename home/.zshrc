@@ -5,52 +5,100 @@
 # ▀█ █▀ █░█ █▀█ █▀▀   █▀▀ █▀█ █▄░█ █▀▀ █ █▀▀  - @elepistemedev
 # █▄ ▄█ █▀█ █▀▄ █▄▄   █▄▄ █▄█ █░▀█ █▀░ █ █▄█  - https://github.com/elepistemedev/dotfiles
 
-# Starship
-export STARSHIP_CONFIG="$HOME/.config/starship/starship.toml"
+
+if [[ -f "/opt/homebrew/bin/brew" ]] then
+  # If you're using macOS, you'll want this enabled
+  eval "$(/opt/homebrew/bin/brew shellenv)"
+fi
+# Path
+# set PATH so it includes user's private bin if it exists
+if [ -d "$HOME/bin" ] ; then
+    PATH="$HOME/bin:$PATH"
+fi
+
+# Set the directory we want to store zinit and plugins
+ZINIT_HOME="${XDG_DATA_HOME:-${HOME}/.local/share}/zinit/zinit.git"
+
+# Download Zinit, if it's not there yet
+if [ ! -d "$ZINIT_HOME" ]; then
+   mkdir -p "$(dirname $ZINIT_HOME)"
+   git clone https://github.com/zdharma-continuum/zinit.git "$ZINIT_HOME"
+fi
+
+# Source/Load zinit
+source "${ZINIT_HOME}/zinit.zsh"
 
 # █▀█ █░░ █░█ █▀▀ █ █▄░█ █▀
 # █▀▀ █▄▄ █▄█ █▄█ █ █░▀█ ▄█
 
-[ -f "${XDG_DATA_HOME:-$HOME/.local/share}/zap/zap.zsh" ] && source "${XDG_DATA_HOME:-$HOME/.local/share}/zap/zap.zsh"
-plug "zsh-users/zsh-autosuggestions"
-plug "zap-zsh/supercharge"
-plug "zap-zsh/zap-prompt"
-plug "zsh-users/zsh-syntax-highlighting"
-plug "wintermi/zsh-starship"
-plug "conda-incubator/conda-zsh-completion"
+# Add in zsh plugins
+zinit light zsh-users/zsh-syntax-highlighting
+zinit light zsh-users/zsh-completions
+zinit light zsh-users/zsh-autosuggestions
+zinit light Aloxaf/fzf-tab
 
-# Load and initialise completion system
-autoload -Uz compinit
-compinit
+# Add in snippets
+zinit snippet OMZL::git.zsh
+zinit snippet OMZP::git
+zinit snippet OMZP::sudo
+zinit snippet OMZP::archlinux
+zinit snippet OMZP::aws
+zinit snippet OMZP::kubectl
+zinit snippet OMZP::kubectx
+zinit snippet OMZP::command-not-found
+
+# Load completions
+autoload -Uz compinit && compinit
+
+zinit cdreplay -q
+
+# Prompt
+eval "$(oh-my-posh init zsh --config $HOME/.config/ohmyposh/negligible.omp.json)"
+
+# Keybindings
+bindkey -e
+bindkey '^p' history-search-backward
+bindkey '^n' history-search-forward
+bindkey '^[w' kill-region
 
 # █░█ █ █▀ ▀█▀ █▀█ █▀█ █▄█
 # █▀█ █ ▄█ ░█░ █▄█ █▀▄ ░█░
 
-HISTFILE=~/.config/zsh/zhistory
-HISTSIZE=50000
-SAVEHIST=50000
+# History
+HISTSIZE=5000
+HISTFILE=~/.zsh_history
+SAVEHIST=$HISTSIZE
+HISTDUP=erase
+setopt appendhistory
+setopt sharehistory
+setopt hist_ignore_space
+setopt hist_ignore_all_dups
+setopt hist_save_no_dups
+setopt hist_ignore_dups
+setopt hist_find_no_dups
+
+# Completion styling
+zstyle ':completion:*' matcher-list 'm:{a-z}={A-Za-z}'
+zstyle ':completion:*' list-colors "${(s.:.)LS_COLORS}"
+zstyle ':completion:*' menu no
+zstyle ':fzf-tab:complete:cd:*' fzf-preview 'ls --color $realpath'
+zstyle ':fzf-tab:complete:__zoxide_z:*' fzf-preview 'ls --color $realpath'
 
 # ▄▀█ █░░ █ ▄▀█ █▀
 # █▀█ █▄▄ █ █▀█ ▄█
 
-# alias mirrors="sudo reflector --verbose --latest 5 --country 'United States' --age 6 --sort rate --save /etc/pacman.d/mirrorlist"
-
-alias grub-update="sudo grub-mkconfig -o /boot/grub/grub.cfg"
-# alias mantenimiento="yay -Sc && sudo pacman -Scc"
-# alias purga="sudo pacman -Rns $(pacman -Qtdq) ; sudo fstrim -av"
-# alias update="paru -Syu --nocombinedupgrade"
-
-alias vm-on="sudo systemctl start libvirtd.service"
-alias vm-off="sudo systemctl stop libvirtd.service"
-
-alias musica="ncmpcpp"
-
+# Aliases
+alias ls='ls --color'
+alias vim='nvim'
+alias c='clear'
 alias ls='lsd -a --group-directories-first'
 alias ll='lsd -la --group-directories-first'
 
 alias clear='~/.config/sentu/logo.sh'
 
-# alias sentu-data='cookiecutter https://github.com/SENTUstudio/cookiecutter-ciencia-datos --checkout main'
+# Shell integrations
+eval "$(fzf --zsh)"
+eval "$(zoxide init --cmd cd zsh)"
 
 # ▄▀█ █░█ ▀█▀ █▀█   █▀ ▀█▀ ▄▀█ █▀█ ▀█▀
 # █▀█ █▄█ ░█░ █▄█   ▄█ ░█░ █▀█ █▀▄ ░█░
@@ -70,4 +118,5 @@ else
 fi
 unset __conda_setup
 # <<< conda initialize <<<
+
 
