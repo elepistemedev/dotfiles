@@ -56,7 +56,7 @@ def update_system(system_info, use_repo=False):
 
         logging.info(f"Actualizando el sistema usando {system_info.package_manager}...")
         result = subprocess.run(
-            system_info.update_command, capture_output=True, text=True
+            system_info.update_command, capture_output=True, input="y\n", text=True
         )
 
         if result.returncode == 0 or (
