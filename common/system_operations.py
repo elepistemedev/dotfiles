@@ -450,18 +450,18 @@ def install_fonts():
         return False
 
 
-# FIXME: cambiar un modulo independiente
-def install_lazygit():
-    """Instala Lazygit"""
-    anaconda_pip = str(Path.home() / "anaconda3" / "bin" / "conda")
-    try:
-        logging.info("Instalando el prompt Starship...")
-        subprocess.run(
-            [anaconda_pip, "install", "Lazygit instalado correctamente")
-        return True
-    except Exception as e:
-        logging.error(f"Error instalando Lazygit: {str(e)}")
-        return False
+# # FIXME: cambiar un modulo independiente
+# def install_lazygit():
+#     """Instala Lazygit"""
+#     anaconda_pip = str(Path.home() / "anaconda3" / "bin" / "conda")
+#     try:
+#         logging.info("Instalando el prompt Starship...")
+#         subprocess.run(
+#             [anaconda_pip, "install", "Lazygit instalado correctamente")
+#         return True
+#     except Exception as e:
+#         logging.error(f"Error instalando Lazygit: {str(e)}")
+#         return False
 
 
 # TODO: Fase 2
@@ -469,8 +469,10 @@ def install_post_install():
     """Post instalación"""
 
     commands = [
-        ("curl -s https://ohmyposh.dev/install.sh | bash -s -- -d ~/bin","Instalando Oh My Posh")
-        ("go install oss.terrastruct.com/d2@latest", "Instalando d2 diagram"),
+        (
+            "curl -s https://ohmyposh.dev/install.sh | bash -s -- -d ~/bin",
+            "Instalando Oh My Posh",
+        )("go install oss.terrastruct.com/d2@latest", "Instalando d2 diagram"),
         ("curl -fsS https://dl.brave.com/install.sh | sh", "Instalando Brave"),
         (
             "git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm",
@@ -479,8 +481,7 @@ def install_post_install():
         ("tmux source ~/.tmux.conf", "activando tmux"),
         ("gem install tmuxinator", "instalando tmuxinator"),
         ("flatpak install flathub md.obsidian.Obsidian", "Instalando Obsidian"),
-        ("flatpak install flathub org.freedownloadmanager.Manager",
-        "Instalando FDM"),
+        ("flatpak install flathub org.freedownloadmanager.Manager", "Instalando FDM"),
     ]
 
     return install_packages(
