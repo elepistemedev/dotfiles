@@ -472,7 +472,8 @@ def install_post_install():
         (
             "curl -s https://ohmyposh.dev/install.sh | bash -s -- -d ~/bin",
             "Instalando Oh My Posh",
-        )("go install oss.terrastruct.com/d2@latest", "Instalando d2 diagram"),
+        ),
+        ("go install oss.terrastruct.com/d2@latest", "Instalando d2 diagram"),
         ("curl -fsS https://dl.brave.com/install.sh | sh", "Instalando Brave"),
         (
             "git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm",
