@@ -5,6 +5,9 @@
 # ▀█ █▀ █░█ █▀█ █▀▀   █▀▀ █▀█ █▄░█ █▀▀ █ █▀▀  - @elepistemedev
 # █▄ ▄█ █▀█ █▀▄ █▄▄   █▄▄ █▄█ █░▀█ █▀░ █ █▄█  - https://github.com/elepistemedev/dotfiles
 
+# Starship
+export STARSHIP_CONFIG="$HOME/.config/starship/starship.toml"
+
 # █▀█ █░░ █░█ █▀▀ █ █▄░█ █▀
 # █▀▀ █▄▄ █▄█ █▄█ █ █░▀█ ▄█
 
