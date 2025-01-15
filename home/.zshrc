@@ -14,6 +14,7 @@ plug "zap-zsh/supercharge"
 plug "zap-zsh/zap-prompt"
 plug "zsh-users/zsh-syntax-highlighting"
 plug "wintermi/zsh-starship"
+plug "conda-incubator/conda-zsh-completion"
 
 # Load and initialise completion system
 autoload -Uz compinit
@@ -52,3 +53,18 @@ alias clear='~/.config/sentu/logo.sh'
 # █▀█ █▄█ ░█░ █▄█   ▄█ ░█░ █▀█ █▀▄ ░█░
 
 ~/.config/sentu/logo.sh
+# >>> conda initialize >>>
+# !! Contents within this block are managed by 'conda init' !!
+__conda_setup="$('/home/el/anaconda3/bin/conda' 'shell.zsh' 'hook' 2> /dev/null)"
+if [ $? -eq 0 ]; then
+    eval "$__conda_setup"
+else
+    if [ -f "/home/el/anaconda3/etc/profile.d/conda.sh" ]; then
+        . "/home/el/anaconda3/etc/profile.d/conda.sh"
+    else
+        export PATH="/home/el/anaconda3/bin:$PATH"
+    fi
+fi
+unset __conda_setup
+# <<< conda initialize <<<
+
