@@ -8,11 +8,10 @@ from common.system_operations import (
     setup_anaconda,
     install_python_packages,
     install_prompt,
-    install_lazyvim,
     install_fonts,
-    install_luapack,
 )
 from common.logo import show as logo
+from common.flatpak_installer import install_flatpak
 
 logger = setup_logger()
 
@@ -64,6 +63,12 @@ def main():
     if not install_prompt():
         logger.error("No se pudo instalar el prompt Starship")
         return
+
+    # Instalar Flatpak
+    if install_flatpak(system_info):
+        logger.info("Flatpak instalado correctamente")
+    else:
+        logger.error("No se pudo instalar Flatpak")
 
     # WARNING: Falta instalar Node (por alguna razón ya se instala)
 
