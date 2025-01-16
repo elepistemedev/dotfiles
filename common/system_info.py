@@ -66,12 +66,19 @@ class SystemInfo:
                 "update": ["sudo", "dnf", "update", "-y"],
                 "install": ["sudo", "dnf", "install", "-y"],
                 "repo": {
-                    "rpmfusion": [
+                    "rpmfusion-nonfree": [
                         "sudo",
                         "dnf",
                         "install",
                         "-y",
                         f"https://download1.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-{self.version}.noarch.rpm",
+                    ],
+                    "rpmfusion-free": [
+                        "sudo",
+                        "dnf",
+                        "install",
+                        "-y",
+                        f"https://download1.rpmfusion.org/free/fedora/rpmfusion-free-release-{self.version}.noarch.rpm",
                     ],
                     "docker": [
                         "sudo",
