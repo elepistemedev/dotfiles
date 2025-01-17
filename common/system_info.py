@@ -64,7 +64,7 @@ class SystemInfo:
             "fedora": {
                 "manager": "dnf",
                 "update": ["sudo", "dnf", "update", "-y"],
-                "install": ["sudo", "dnf", "install", "-y"],
+                "install": ["sudo", "dnf", "install", "-y", "--allowerasing"],
                 "repo": {
                     "rpmfusion-nonfree": [
                         "sudo",
