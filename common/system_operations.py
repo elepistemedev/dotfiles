@@ -103,7 +103,7 @@ def install_dependencies(system_info, use_extended=False):
     try:
         for package in dependencies:
             logging.info(f"Instalando {package}...")
-            cmd = system_info.install_command + [package]
+            cmd = system_info.install_command + [package] + "--allowerasing"
             result = subprocess.run(cmd, capture_output=True, text=True)
 
             if result.returncode != 0:

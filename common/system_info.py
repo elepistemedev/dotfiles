@@ -118,6 +118,12 @@ class SystemInfo:
                         "java",
                         "dnf-utils",
                         "flatpak",
+                        "kernel-devel",
+                        "gcc",
+                        "make",
+                        "automake",
+                        "perl",
+                        "elfutils-libelf-devel",
                     ],
                     "extended": [
                         "lazygit",
