@@ -265,26 +265,31 @@ def install_python_packages():
         return False
 
 
-# 8. Instalar prompt Starship
+# 8. Instalar prompt Oh My Posh
 def install_prompt():
-    """Instala el prompt starship"""
-    anaconda_pip = str(Path.home() / "anaconda3" / "bin" / "conda")
+    """Instala Oh My Posh prompt"""
     try:
-        logging.info("Instalando el prompt Starship...")
-        subprocess.run(
-            [anaconda_pip, "install", "-c", "conda-forge", "starship"], check=True
+        logging.info("Instalando Oh My Posh...")
+        # Crear directorio bin si no existe
+        bin_path = Path.home() / "bin"
+        bin_path.mkdir(exist_ok=True)
+
+        # Ejecutar el comando de instalación
+        install_command = (
+            "curl -s https://ohmyposh.dev/install.sh | bash -s -- -d ~/bin"
         )
+        subprocess.run(install_command, shell=True, check=True)
 
         # Configurar PATH en .zshrc
         zshrc_path = Path.home() / ".zshrc"
         with open(zshrc_path, "a") as zshrc:
-            zshrc.write("\n# Starship Prompt\n")
-            zshrc.write('eval "$(starship init zsh)"\n')
+            zshrc.write("\n# Oh My Posh Prompt\n")
+            zshrc.write('eval "$(~/bin/oh-my-posh init zsh)"\n')
 
-        logging.info("Prompt Startship instalado correctamente")
+        logging.info("Oh My Posh instalado correctamente")
         return True
     except Exception as e:
-        logging.error(f"Error instalando el prompt Starship: {str(e)}")
+        logging.error(f"Error instalando Oh My Posh: {str(e)}")
         return False
 
 
