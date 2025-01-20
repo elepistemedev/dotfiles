@@ -237,7 +237,7 @@ def setup_anaconda():
 # 7. Instalar paquetes Python necesarios
 def install_python_packages():
     """Instala los paquetes Python necesarios para la fase 2"""
-    packages = ["rich", "InquirerPy", "typer", "tqdm", "gitlint", "textual"]
+    packages = ["rich", "InquirerPy", "typer", "tqdm", "gitlint", "textual", "uv"]
     anaconda_pip = str(Path.home() / "anaconda3" / "bin" / "pip")
 
     try:
