@@ -96,7 +96,7 @@ def main():
     logo("💾 Post Instalación - 2da Fase")
 
     # Preguntar al usuario si desea continuar
-    action = inquirer.select(
+    action = inquirer.select(  # type: ignore
         message="¿Deseas continuar con la Fase 2 o salir?",
         choices=[
             "Continuar con la Fase 2",

@@ -5,6 +5,7 @@ import subprocess
 import re
 from InquirerPy import inquirer
 from InquirerPy.utils import color_print
+from pathlib import Path
 
 # Colores para mensajes en terminal (para uso con color_print)
 
@@ -75,6 +76,32 @@ def setup_xdg_dirs():
     return True
 
 
+def _get_config_folders():
+    """
+    Lee las carpetas presentes en ~/dotfiles/config y devuelve una lista con sus nombres.
+
+    Returns:
+        list: Lista de nombres de carpetas encontradas en el directorio
+    """
+    # Expandir el path ~ a la ruta completa del home del usuario
+    config_path = os.path.expanduser("~/dotfiles/config")
+
+    # Verificar si el directorio existe
+    if not os.path.exists(config_path):
+        raise FileNotFoundError(f"El directorio {config_path} no existe")
+
+    # Usar Path para manejar las rutas de manera más robusta
+    path = Path(config_path)
+
+    # Obtener solo los directorios (no archivos) y extraer sus nombres
+    folders = [item.name for item in path.iterdir() if item.is_dir()]
+
+    # Ordenar la lista alfabéticamente para mantener consistencia
+    folders.sort()
+
+    return folders
+
+
 def install_dot(try_nvim=None):
     """
     Instala dotfiles y hace respaldo de las configuraciones existentes.
@@ -108,15 +135,16 @@ def install_dot(try_nvim=None):
             [
                 (
                     "yellow",
-                    "Si respondes 'y', tu configuración de neovim se moverá al directorio de respaldo.\n",
+                    "Si respondes 'Sí', tu configuración de neovim se moverá al directorio de respaldo.\n",
                 )
             ]
         )
 
-        try_nvim = inquirer.confirm(
-            message="¿Quieres probar mi configuración de nvim?", default=True
+        try_nvim = inquirer.select(  # type: ignore
+            message="¿Quieres probar mi configuración de nvim?",
+            choices=["Sí", "No"],
         ).execute()
-        try_nvim = "y" if try_nvim else "n"
+        try_nvim = "y" if try_nvim == "Sí" else "n"
 
     # Crear carpeta de respaldo si no existe
     os.makedirs(backup_folder, exist_ok=True)
@@ -134,24 +162,25 @@ def install_dot(try_nvim=None):
     # (Mantendremos la lógica para respaldar y copiar archivos)
 
     # Carpetas para respaldar
-    config_folders = [
-        "bspwm",
-        "alacritty",
-        "picom",
-        "rofi",
-        "eww",
-        "sxhkd",
-        "dunst",
-        "kitty",
-        "polybar",
-        "ncmpcpp",
-        "ranger",
-        "tmux",
-        "zsh",
-        "mpd",
-        "paru",
-        "sentu",
-    ]
+    # config_folders = [
+    #     "bspwm",
+    #     "alacritty",
+    #     "picom",
+    #     "rofi",
+    #     "eww",
+    #     "sxhkd",
+    #     "dunst",
+    #     "kitty",
+    #     "polybar",
+    #     "ncmpcpp",
+    #     "ranger",
+    #     "tmux",
+    #     "zsh",
+    #     "mpd",
+    #     "paru",
+    #     "sentu",
+    # ]
+    config_folders = _get_config_folders()
 
     # Respaldar configuraciones existentes
     for folder in config_folders:
