@@ -13,7 +13,7 @@ logging = setup_logger()
 
 # 2. Actualizar sistema
 def update_system(system_info, use_repo=False):
-    """Actualiza el sistema usando el gestor de paquetes correspondiente y muestra la salida en tiempo real"""
+    """Actualiza el sistema usando el gestor de paquetes correspondiente"""
     if not system_info.update_command:
         logging.error("No se pudo determinar el comando de actualización")
         return False
@@ -28,80 +28,45 @@ def update_system(system_info, use_repo=False):
                         f"Añadiendo repositorio {repo_name}:\n{' '.join(repo_command)}"
                     )
                     try:
-                        # Usar Popen para repositorios
-                        process = subprocess.Popen(
-                            repo_command,
-                            stdout=subprocess.PIPE,
-                            stderr=subprocess.PIPE,
-                            text=True,
-                            bufsize=1,
-                            universal_newlines=True
+                        result = subprocess.run(
+                            repo_command, text=True, input="y\n", check=True
                         )
-                        
-                        # Leer y mostrar la salida en tiempo real
-                        while True:
-                            output = process.stdout.readline()
-                            if output == '' and process.poll() is not None:
-                                break
-                            if output:
-                                logging.info(output.strip())
-                        
-                        # Obtener código de retorno y errores
-                        return_code = process.poll()
-                        if return_code == 0 or (
+                        # DNF puede retornar 100 cuando no hay actualizaciones disponibles
+                        if result.returncode == 0 or (
                             system_info.package_manager in ["dnf", "yum"]
-                            and return_code == 100
+                            and result.returncode == 100
                         ):
                             logging.info(
                                 f"Repositorio {repo_name} configurado correctamente"
                             )
                         else:
-                            _, stderr = process.communicate()
                             logging.error(
-                                f"Error configurando repositorio {repo_name}: {stderr}"
+                                f"Error configurando repositorio {repo_name}: {result.stderr}"
                             )
                             return False
-                    except subprocess.SubprocessError as e:
+                    except subprocess.CalledProcessError as e:
                         logging.error(
-                            f"Error ejecutando comando para repositorio {repo_name}: {str(e)}"
+                            f"Error ejecutando comando para repositorio {repo_name}: {e.stderr}"
                         )
                         return False
 
         logging.info(f"Actualizando el sistema usando {system_info.package_manager}...")
-        
-        # Usar Popen para el comando de actualización
-        process = subprocess.Popen(
-            system_info.update_command,
-            stdout=subprocess.PIPE,
-            stderr=subprocess.PIPE,
-            text=True,
-            bufsize=1,
-            universal_newlines=True
+        result = subprocess.run(
+            system_info.update_command, text=True, input="y\n", check=True
         )
 
-        # Leer y mostrar la salida en tiempo real
-        while True:
-            output = process.stdout.readline()
-            if output == '' and process.poll() is not None:
-                break
-            if output:
-                logging.info(output.strip())
-
-        # Manejar el código de retorno
-        return_code = process.poll()
-        if return_code == 0 or (
-            system_info.package_manager in ["dnf", "yum"] and return_code == 100
+        if result.returncode == 0 or (
+            system_info.package_manager in ["dnf", "yum"] and result.returncode == 100
         ):
             logging.info("Sistema actualizado correctamente")
             return True
         else:
-            _, stderr = process.communicate()
-            logging.error(f"Error actualizando el sistema: {stderr}")
+            logging.error(f"Error actualizando el sistema: {result.stderr}")
             return False
-
     except Exception as e:
         logging.error(f"Error durante la actualización: {str(e)}")
         return False
+
 
 # 3 Instalar dependencias básicas
 def install_dependencies(system_info, use_extended=False):
@@ -446,18 +411,18 @@ def install_fonts():
         # Función auxiliar para descargar con progreso
         def download_with_progress(url, filename):
             response = urllib.request.urlopen(url)
-            total_size = int(response.headers.get('Content-Length', 0))
+            total_size = int(response.headers.get("Content-Length", 0))
             block_size = 8192
             downloaded = 0
 
-            with open(filename, 'wb') as f:
+            with open(filename, "wb") as f:
                 while True:
                     buffer = response.read(block_size)
                     if not buffer:
                         break
                     downloaded += len(buffer)
                     f.write(buffer)
-                    
+
                     # Calcular y mostrar el progreso
                     if total_size > 0:
                         percent = downloaded * 100 / total_size
@@ -467,7 +432,7 @@ def install_fonts():
         # Descargar e instalar cada fuente
         for filename, url in urls.items():
             zip_path = os.path.join(home_dir, filename)
-            
+
             # Descargar archivo con barra de progreso
             logger.info(f"Iniciando descarga de {filename}...")
             download_with_progress(url, zip_path)
@@ -506,8 +471,6 @@ def install_fonts():
         return False
 
 
-
-
 # TODO: Fase 2
 def install_post_install():
     """Post instalación"""
@@ -525,9 +488,15 @@ def install_post_install():
         ),
         ("tmux source ~/.tmux.conf", "activando tmux"),
         ("gem install tmuxinator", "instalando tmuxinator"),
-        ("flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo", "Actualizando repo Flatpak"),
+        (
+            "flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo",
+            "Actualizando repo Flatpak",
+        ),
         ("flatpak install flathub md.obsidian.Obsidian -y", "Instalando Obsidian"),
-        ("flatpak install flathub org.freedownloadmanager.Manager -y", "Instalando FDM"),
+        (
+            "flatpak install flathub org.freedownloadmanager.Manager -y",
+            "Instalando FDM",
+        ),
     ]
 
     return install_packages(
