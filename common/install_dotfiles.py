@@ -2,7 +2,6 @@ import os
 import shutil
 from datetime import datetime
 import subprocess
-import re
 from InquirerPy import inquirer
 from InquirerPy.utils import color_print
 from pathlib import Path
@@ -238,66 +237,6 @@ def install_dot(try_nvim=None):
         else:
             color_print([("cyan", "Carpeta nvim no existe, no se necesita respaldo\n")])
 
-    # Respaldar configuraciones de Firefox
-    firefox_profile = None
-    firefox_path = os.path.join(home, ".mozilla", "firefox")
-    if os.path.exists(firefox_path):
-        profiles = [
-            d for d in os.listdir(firefox_path) if d.endswith("default-release")
-        ]
-        if profiles:
-            firefox_profile = profiles[0]
-
-            # Respaldar carpeta chrome
-            chrome_path = os.path.join(firefox_path, firefox_profile, "chrome")
-            if os.path.exists(chrome_path):
-                try:
-                    backup_path = os.path.join(backup_folder, f"chrome_{date}")
-                    shutil.move(chrome_path, backup_path)
-                    color_print(
-                        [
-                            (
-                                "cyan",
-                                "Carpeta Chrome respaldada exitosamente en ",
-                            ),
-                            ("cyan", f"{backup_path}\n"),
-                        ]
-                    )
-                except Exception as e:
-                    color_print(
-                        [
-                            (
-                                "red",
-                                f"No se pudo respaldar la carpeta Chrome. Error: {str(e)}\n",
-                            )
-                        ]
-                    )
-
-            # Respaldar user.js
-            user_js_path = os.path.join(firefox_path, firefox_profile, "user.js")
-            if os.path.exists(user_js_path):
-                try:
-                    backup_path = os.path.join(backup_folder, f"user.js_{date}")
-                    shutil.move(user_js_path, backup_path)
-                    color_print(
-                        [
-                            (
-                                "cyan",
-                                "Archivo user.js respaldado exitosamente en ",
-                            ),
-                            ("cyan", f"{backup_path}\n"),
-                        ]
-                    )
-                except Exception as e:
-                    color_print(
-                        [
-                            (
-                                "red",
-                                f"No se pudo respaldar el archivo user.js. Error: {str(e)}\n",
-                            )
-                        ]
-                    )
-
     # Respaldar .zshrc
     zshrc_path = os.path.join(home, ".zshrc")
     if os.path.exists(zshrc_path):
@@ -357,31 +296,6 @@ def install_dot(try_nvim=None):
                 ]
             )
 
-    # Copiar carpetas misc
-    misc_folders = ["applications", "asciiart", "fonts", "startup-page"]
-    for folder in misc_folders:
-        try:
-            shutil.copytree(
-                os.path.join(dotfiles_path, "misc", folder),
-                os.path.join(home, ".local", "share", folder),
-                dirs_exist_ok=True,
-            )
-            color_print(
-                [
-                    ("yellow", f"{folder}"),
-                    ("cyan", " carpeta copiada exitosamente!\n"),
-                ]
-            )
-        except Exception as e:
-            color_print(
-                [
-                    (
-                        "red",
-                        f"No se pudo copiar la carpeta {folder}. Error: {str(e)}\n",
-                    )
-                ]
-            )
-
     # Copiar carpeta bin
     try:
         shutil.copytree(
@@ -392,51 +306,6 @@ def install_dot(try_nvim=None):
         color_print([("cyan", "Carpeta bin copiada exitosamente!\n")])
     except Exception as e:
         color_print([("red", f"No se pudo copiar la carpeta bin. Error: {str(e)}\n")])
-
-    # Copiar tema de Firefox si existe el perfil
-    if firefox_profile:
-        firefox_source = os.path.join(dotfiles_path, "misc", "firefox")
-        firefox_dest = os.path.join(firefox_path, firefox_profile)
-        try:
-            for item in os.listdir(firefox_source):
-                src_path = os.path.join(firefox_source, item)
-                dst_path = os.path.join(firefox_dest, item)
-                if os.path.isfile(src_path):
-                    shutil.copy2(src_path, dst_path)
-                else:
-                    shutil.copytree(src_path, dst_path, dirs_exist_ok=True)
-            color_print([("cyan", "¡Tema de Firefox copiado exitosamente!\n")])
-        except Exception as e:
-            color_print(
-                [
-                    (
-                        "red",
-                        f"No se pudo copiar el tema de Firefox. Error: {str(e)}\n",
-                    )
-                ]
-            )
-
-        # Actualizar user.js con la ruta correcta
-        user_js_path = os.path.join(firefox_dest, "user.js")
-        if os.path.exists(user_js_path):
-            with open(user_js_path, "r") as f:
-                content = f.read()
-            content = re.sub(
-                r'user_pref\("browser\.startup\.homepage", "file:\/\/\/home\/z0mbi3\/.local',
-                f'user_pref("browser.startup.homepage", "file:///home/{os.getenv("USER")}/.local',
-                content,
-            )
-            with open(user_js_path, "w") as f:
-                f.write(content)
-
-    # Actualizar configuración de la página de inicio
-    startup_config = os.path.join(home, ".local", "share", "startup-page", "config.js")
-    if os.path.exists(startup_config):
-        with open(startup_config, "r") as f:
-            content = f.read()
-        content = content.replace("name: 'gh0stzk'", f"name: '{os.getenv('USER')}'")
-        with open(startup_config, "w") as f:
-            f.write(content)
 
     # Copiar zshrc
     try:

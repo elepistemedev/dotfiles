@@ -63,13 +63,11 @@ def fase2():
         color_print([("red", "❌ No se pudo configurar Docker")])
     color_print([("green", "✓ Docker configurado correctamente")])
 
-    # 8. Instalar d2
+    # 8. Instalar post-instalaciones
     color_print([("cyan", "⚡ Ejecutando post-instalaciones...")])
     if not install_post_install():
         color_print([("red", "❌ No se pudo ejecutar las post-instalaciones")])
     color_print([("green", "✓ Las post-instalaciones se ejecutaron correctamente")])
-
-    # TODO: Faltan las post-instalaciones
 
     # 99. Instalar dotfiles
     color_print([("cyan", "⚡ Instalando dotfiles...")])
