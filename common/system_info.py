@@ -1,5 +1,6 @@
 import platform
 import subprocess
+
 from .logger_utils import setup_logger
 
 logging = setup_logger()
@@ -28,23 +29,15 @@ class SystemInfo:
                 lines = f.readlines()
                 for line in lines:
                     if line.startswith("ID="):
-                        self.distribution = (
-                            line.split("=")[1].strip().strip('"').lower()
-                        )
+                        self.distribution = line.split("=")[1].strip().strip('"').lower()
                     elif line.startswith("VERSION_ID="):
                         self.version = line.split("=")[1].strip().strip('"')
         except FileNotFoundError:
             try:
                 self.distribution = (
-                    subprocess.check_output(
-                        ["lsb_release", "-si"], universal_newlines=True
-                    )
-                    .strip()
-                    .lower()
+                    subprocess.check_output(["lsb_release", "-si"], universal_newlines=True).strip().lower()
                 )
-                self.version = subprocess.check_output(
-                    ["lsb_release", "-sr"], universal_newlines=True
-                ).strip()
+                self.version = subprocess.check_output(["lsb_release", "-sr"], universal_newlines=True).strip()
             except (subprocess.CalledProcessError, FileNotFoundError):
                 logging.error("No se pudo detectar la distribución Linux")
 
@@ -218,6 +211,4 @@ class SystemInfo:
             self.install_command = pm_info["install"]
             self.repositories = pm_info.get("repo", {})
             self.dependencies_core = pm_info.get("dependencies", {}).get("core", [])
-            self.dependencies_extended = pm_info.get("dependencies", {}).get(
-                "extended", []
-            )
+            self.dependencies_extended = pm_info.get("dependencies", {}).get("extended", [])

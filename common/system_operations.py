@@ -1,12 +1,14 @@
-import subprocess
-from .logger_utils import setup_logger
 import os
 from pathlib import Path
-import urllib.request
-from urllib.error import URLError
+import subprocess
 import sys
-from common.install_packages import install_packages
+from urllib.error import URLError
+import urllib.request
 import zipfile
+
+from common.install_packages import install_packages
+
+from .logger_utils import setup_logger
 
 logging = setup_logger()
 
@@ -24,40 +26,25 @@ def update_system(system_info, use_repo=False):
                 logging.info("No hay repositorios para configurar.")
             else:
                 for repo_name, repo_command in system_info.repositories.items():
-                    logging.warning(
-                        f"Añadiendo repositorio {repo_name}:\n{' '.join(repo_command)}"
-                    )
+                    logging.warning(f"Añadiendo repositorio {repo_name}:\n{' '.join(repo_command)}")
                     try:
-                        result = subprocess.run(
-                            repo_command, text=True, input="y\n", check=True
-                        )
+                        result = subprocess.run(repo_command, text=True, input="y\n", check=True)
                         # DNF puede retornar 100 cuando no hay actualizaciones disponibles
                         if result.returncode == 0 or (
-                            system_info.package_manager in ["dnf", "yum"]
-                            and result.returncode == 100
+                            system_info.package_manager in ["dnf", "yum"] and result.returncode == 100
                         ):
-                            logging.info(
-                                f"Repositorio {repo_name} configurado correctamente"
-                            )
+                            logging.info(f"Repositorio {repo_name} configurado correctamente")
                         else:
-                            logging.error(
-                                f"Error configurando repositorio {repo_name}: {result.stderr}"
-                            )
+                            logging.error(f"Error configurando repositorio {repo_name}: {result.stderr}")
                             return False
                     except subprocess.CalledProcessError as e:
-                        logging.error(
-                            f"Error ejecutando comando para repositorio {repo_name}: {e.stderr}"
-                        )
+                        logging.error(f"Error ejecutando comando para repositorio {repo_name}: {e.stderr}")
                         return False
 
         logging.info(f"Actualizando el sistema usando {system_info.package_manager}...")
-        result = subprocess.run(
-            system_info.update_command, text=True, input="y\n", check=True
-        )
+        result = subprocess.run(system_info.update_command, text=True, input="y\n", check=True)
 
-        if result.returncode == 0 or (
-            system_info.package_manager in ["dnf", "yum"] and result.returncode == 100
-        ):
+        if result.returncode == 0 or (system_info.package_manager in ["dnf", "yum"] and result.returncode == 100):
             logging.info("Sistema actualizado correctamente")
             return True
         else:
@@ -85,11 +72,7 @@ def install_dependencies(system_info, use_extended=False):
         return False
 
     # Seleccionar qué conjunto de dependencias usar
-    dependencies = (
-        system_info.dependencies_extended
-        if use_extended
-        else system_info.dependencies_core
-    )
+    dependencies = system_info.dependencies_extended if use_extended else system_info.dependencies_core
 
     if not dependencies:
         logging.warning("No hay dependencias definidas para instalar")
@@ -109,9 +92,7 @@ def install_dependencies(system_info, use_extended=False):
 
         if success:
             dependency_type = "extendidas" if use_extended else "core"
-            logging.info(
-                f"Todas las dependencias {dependency_type} fueron instaladas correctamente"
-            )
+            logging.info(f"Todas las dependencias {dependency_type} fueron instaladas correctamente")
         else:
             logging.warning("Algunas dependencias no pudieron ser instaladas")
 
@@ -136,9 +117,7 @@ def install_and_configure_zsh():
             text=True,
         )
         if result.returncode != 0:
-            raise Exception(
-                f"Error configurando zsh como shell por defecto: {result.stderr}"
-            )
+            raise Exception(f"Error configurando zsh como shell por defecto: {result.stderr}")
 
         logging.info("zsh instalado y configurado correctamente")
         return True
@@ -167,9 +146,7 @@ def clone_repo():
 # 6. Instalar Anaconda
 def setup_anaconda():
     """Descarga e instala Anaconda"""
-    anaconda_url = (
-        "https://repo.anaconda.com/archive/Anaconda3-2024.10-1-Linux-x86_64.sh"
-    )
+    anaconda_url = "https://repo.anaconda.com/archive/Anaconda3-2024.10-1-Linux-x86_64.sh"
     installer_path = Path.home() / "anaconda_installer.sh"
     anaconda_path = Path.home() / "anaconda3"
 
@@ -248,9 +225,7 @@ def install_python_packages():
         # Instalar paquetes
         for package in packages:
             logging.info(f"Instalando {package}...")
-            result = subprocess.run(
-                [anaconda_pip, "install", package], capture_output=True, text=True
-            )
+            result = subprocess.run([anaconda_pip, "install", package], capture_output=True, text=True)
             if result.returncode != 0:
                 raise Exception(f"Error instalando {package}: {result.stderr}")
 
@@ -271,9 +246,7 @@ def install_prompt():
         bin_path.mkdir(exist_ok=True)
 
         # Ejecutar el comando de instalación
-        install_command = (
-            "curl -s https://ohmyposh.dev/install.sh | bash -s -- -d ~/bin"
-        )
+        install_command = "curl -s https://ohmyposh.dev/install.sh | bash -s -- -d ~/bin"
         subprocess.run(install_command, shell=True, check=True)
 
         # Configurar PATH en .zshrc
@@ -296,9 +269,7 @@ def install_fnm():
     try:
         logging.info("Instalando Fast Node Manager...")
         # Obtener el contenido del script
-        curl_process = subprocess.run(
-            ["curl", "-sS", repo_url], capture_output=True, text=True, check=True
-        )
+        curl_process = subprocess.run(["curl", "-sS", repo_url], capture_output=True, text=True, check=True)
         # Ejecutar el script con sh
         subprocess.run(["sh"], input=curl_process.stdout, text=True, check=True)
 

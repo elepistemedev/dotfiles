@@ -1,5 +1,6 @@
-from typing import Optional
 import subprocess
+from typing import Optional
+
 from common.logger_utils import setup_logger
 from common.system_info import SystemInfo
 
@@ -57,9 +58,7 @@ class FlatpakInstaller:
 
         package_manager = self.system_info.package_manager
         if package_manager not in self.installation_commands:
-            logger.error(
-                f"Gestor de paquetes '{package_manager}' no soportado para instalar Flatpak"
-            )
+            logger.error(f"Gestor de paquetes '{package_manager}' no soportado para instalar Flatpak")
             return False
 
         # Instalar Flatpak
