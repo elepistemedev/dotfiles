@@ -1,16 +1,17 @@
 from InquirerPy import inquirer
+from InquirerPy.utils import color_print
+
+from common.install_dotfiles import install_dot
 from common.logo import show as logo
 from common.system_info import SystemInfo
 from common.system_operations import (
-    update_system,
+    configurar_docker,
     install_dependencies,
     install_lazyvim,
-    configurar_docker,
     install_luapack,
     install_post_install,
+    update_system,
 )
-from InquirerPy.utils import color_print
-from common.install_dotfiles import install_dot
 
 
 def fase2():
