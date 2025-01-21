@@ -54,6 +54,11 @@ class SystemInfo:
                 "update": ["sudo", "apt-get", "update"],
                 "install": ["sudo", "apt-get", "install", "-y"],
             },
+            "mint": {
+                "manager": "apt",
+                "update": ["sudo", "apt-get", "update"],
+                "install": ["sudo", "apt-get", "install", "-y"],
+            },
             "fedora": {
                 "manager": "dnf",
                 "update": ["sudo", "dnf", "update", "-y"],
