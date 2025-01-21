@@ -171,5 +171,5 @@ cython_debug/
 .pypirc
 
 # Archivo para depositar cambios a borrar a futuro
-borrame/
+.borrame/
 
