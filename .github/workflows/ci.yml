@@ -1,4 +1,3 @@
-# .github/workflows/ci.yml
 name: CI
 
 on:
@@ -12,35 +11,29 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        python-version: ["3.12", "3.13"]
+        python-version: ["3.10", "3.11", "3.12", "3.13"]
 
     steps:
     - uses: actions/checkout@v4
     
-    - name: Set up Python ${{ matrix.python-version }}
-      uses: actions/setup-python@v5
-      with:
-        python-version: ${{ matrix.python-version }}
-        
     - name: Install uv
       run: |
         curl -LsSf https://astral.sh/uv/install.sh | sh
         echo "$HOME/.cargo/bin" >> $GITHUB_PATH
         
-    - name: Create virtual environment
+    - name: Setup Python with uv
       run: |
         uv venv
-
-    - name: Install dependencies
-      run: |
-        uv pip install -r requirements/requirements-dev.txt
+        source .venv/bin/activate
+        uv pip sync requirements/requirements-dev.txt
         
     - name: Run pre-commit
       uses: pre-commit/action@v3.0.1
         
     - name: Run tests
       run: |
-        pytest tests/ --cov=src --cov-report=xml
+        source .venv/bin/activate
+        uv run pytest tests/ --cov=src --cov-report=xml
         
     - name: Upload coverage
       uses: codecov/codecov-action@v4
@@ -54,17 +47,15 @@ jobs:
     steps:
     - uses: actions/checkout@v4
     
-    - name: Set up Python
-      uses: actions/setup-python@v5
-      with:
-        python-version: "3.12"
-        
-    - name: Install dependencies
+    - name: Install uv
       run: |
         curl -LsSf https://astral.sh/uv/install.sh | sh
-        uv pip install ruff
+        echo "$HOME/.cargo/bin" >> $GITHUB_PATH
         
-    - name: Run Ruff
+    - name: Setup Python and lint
       run: |
-        ruff check .
-        ruff format --check .
+        uv venv
+        source .venv/bin/activate
+        uv pip install ruff
+        uv run ruff check .
+        uv run ruff format --check .
