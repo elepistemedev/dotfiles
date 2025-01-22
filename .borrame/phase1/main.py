@@ -1,17 +1,17 @@
+from common.flatpak_installer import install_flatpak
 from common.logger_utils import setup_logger
+from common.logo import show as logo
 from common.system_info import SystemInfo
 from common.system_operations import (
-    update_system,
-    install_dependencies,
-    install_and_configure_zsh,
     clone_repo,
-    setup_anaconda,
-    install_python_packages,
-    install_prompt,
+    install_and_configure_zsh,
+    install_dependencies,
     install_fonts,
+    install_prompt,
+    install_python_packages,
+    setup_anaconda,
+    update_system,
 )
-from common.logo import show as logo
-from common.flatpak_installer import install_flatpak
 
 logger = setup_logger()
 
@@ -24,9 +24,7 @@ def main():
     system_info = SystemInfo()
     logger.warning(f"Sistema detectado: {system_info.system}")
     if system_info.distribution:
-        logger.warning(
-            f"Distribución: {system_info.distribution} {system_info.version}"
-        )
+        logger.warning(f"Distribución: {system_info.distribution} {system_info.version}")
         logger.warning(f"Gestor de paquetes: {system_info.package_manager}")
 
     # 2. Actualizar sistema
@@ -59,9 +57,9 @@ def main():
         logger.error("No se pudieron instalar los paquetes Python")
         return
 
-    # 8. Instalar prompt Starship
+    # 8. Instalar prompt Prompt
     if not install_prompt():
-        logger.error("No se pudo instalar el prompt Starship")
+        logger.error("No se pudo instalar el prompt")
         return
 
     # Instalar Flatpak

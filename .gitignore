@@ -169,3 +169,19 @@ cython_debug/
 
 # PyPI configuration file
 .pypirc
+
+# Tests / coverage
+.coverage
+.pytest_cache/
+htmlcov/
+
+# Logs
+logs/*
+!logs/.gitkeep
+*.log
+*.log.*
+
+# Archivo para depositar cambios a borrar a futuro
+.borrame/
+
+*.lock

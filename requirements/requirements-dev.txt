@@ -1,0 +1,6 @@
+inquirerpy
+pytest>=7.0
+PyYAML>=6.0
+requests>=2.28
+ruff
+pytest-cov
