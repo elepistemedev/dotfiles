@@ -182,7 +182,6 @@ logs/*
 *.log.*
 
 # Archivo para depositar cambios a borrar a futuro
-.borrame/*
+.borrame/
 
-uv.lock
-.borrame/home
+*.lock
