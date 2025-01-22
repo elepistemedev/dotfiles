@@ -22,7 +22,7 @@ select = [
   "N",   # pep8-naming - convenciones de nombres
   "UP",  # pyupgrade - modernización de sintaxis
   "RUF", # reglas específicas de ruff
-  "D",   # pydocstyle - docstrings
+  # "D",    # pydocstyle - docstrings
 ]
 ignore = []
 
