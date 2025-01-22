@@ -1,13 +1,13 @@
 # ruff.toml
 
 # Configuración general
-line-length = 120  # Mantenemos tu preferencia de longitud de línea
-target-version = "py39"  # Especificamos versión objetivo de Python
-indent-width = 4  # Mantenemos tu preferencia de indentación
+line-length = 120       # Mantenemos tu preferencia de longitud de línea
+target-version = "py39" # Especificamos versión objetivo de Python
+indent-width = 4        # Mantenemos tu preferencia de indentación
 
 [format]
-quote-style = "double"  # Mantenemos comillas dobles
-indent-style = "space"  # Mantenemos indentación con espacios
+quote-style = "double"            # Mantenemos comillas dobles
+indent-style = "space"            # Mantenemos indentación con espacios
 skip-magic-trailing-comma = false
 line-ending = "auto"
 
@@ -15,28 +15,30 @@ line-ending = "auto"
 # Expandimos la selección de reglas manteniendo tus básicas (E, F, I)
 # y agregando reglas útiles adicionales
 select = [
-    "E",    # pycodestyle - errores y warnings de estilo
-    "F",    # pyflakes - errores lógicos y potenciales bugs
-    "I",    # isort - ordenamiento de imports
-    "B",    # flake8-bugbear - bugs y problemas de diseño
-    "N",    # pep8-naming - convenciones de nombres
-    "UP",   # pyupgrade - modernización de sintaxis
-    "RUF",  # reglas específicas de ruff
-    "D",    # pydocstyle - docstrings
+  "E",   # pycodestyle - errores y warnings de estilo
+  "F",   # pyflakes - errores lógicos y potenciales bugs
+  "I",   # isort - ordenamiento de imports
+  "B",   # flake8-bugbear - bugs y problemas de diseño
+  "N",   # pep8-naming - convenciones de nombres
+  "UP",  # pyupgrade - modernización de sintaxis
+  "RUF", # reglas específicas de ruff
+  "D",   # pydocstyle - docstrings
 ]
 ignore = []
 
 # Configuración específica para isort
 [lint.isort]
-combine-as-imports = true            # Mantiene tu preferencia
-force-sort-within-sections = true    # Mantiene tu preferencia
-known-first-party = []              # Puedes agregar tus módulos aquí
-known-third-party = []              # Puedes agregar dependencias externas aquí
+combine-as-imports = true         # Mantiene tu preferencia
+force-sort-within-sections = true # Mantiene tu preferencia
+known-first-party = []            # Puedes agregar tus módulos aquí
+known-third-party = []            # Puedes agregar dependencias externas aquí
 
 # Configuración para docstrings
 [lint.pydocstyle]
-convention = "google"               # Usa el estilo de Google para docstrings
+convention = "google" # Usa el estilo de Google para docstrings
 
 # Configuración para nombres (pep8-naming)
 [lint.pep8-naming]
-classmethod-decorators = ["classmethod"]  # Decoradores personalizados para métodos de clase
+classmethod-decorators = [
+  "classmethod",
+] # Decoradores personalizados para métodos de clase
