@@ -13,6 +13,7 @@ Respaldo de mis archivos de configuración para linux. Optimizado para la distro
 [![Python Version](https://img.shields.io/badge/python-3.8%2B-blue)](https://www.python.org/downloads/)
 [![Code Style: Black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 [![Tests](https://github.com/elepistemedev/dotfiles/actions/workflows/tests.yml/badge.svg)](https://github.com/elepistemedev/dotfiles/actions)
+[![CI Status](https://github.com/elepistemedev/dotfiles/actions/workflows/ci.yml/badge.svg)](https://github.com/elepistemedev/dotfiles/actions)
 
 A powerful and flexible post-installation system configurator and dotfiles manager. Automate your system setup across different Linux distributions with ease.
 
