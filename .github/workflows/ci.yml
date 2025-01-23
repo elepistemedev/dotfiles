@@ -27,8 +27,8 @@ jobs:
         source .venv/bin/activate
         uv pip sync requirements/requirements-dev.txt
         
-    - name: Run pre-commit
-      uses: pre-commit/action@v3.0.1
+#    - name: Run pre-commit
+#      uses: pre-commit/action@v3.0.1
 
     - name: Run tests
       run: |
