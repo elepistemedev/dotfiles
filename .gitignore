@@ -185,3 +185,5 @@ logs/*
 .borrame/
 
 *.lock
+.idea
+.vscode
