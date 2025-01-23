@@ -13,7 +13,9 @@ license = { file = "LICENSE" } # Archivo de licencia, si existe
 authors = [
   { name = "Luis Guillermo Echenique", email = "elepistemedev@gmail.com" },
 ]
-dependencies = [] # Dependencias del proyecto
+dependencies = [
+    "click>=8.1.8",
+] # Dependencias del proyecto
 classifiers = [
   "Programming Language :: Python :: 3",
   "License :: OSI Approved :: MIT License", # Cambia según la licencia que uses
