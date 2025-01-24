@@ -1,0 +1,14 @@
+manager: apt
+update_command: 
+  - sudo
+  - apt-get
+  - update
+install_command:
+  - sudo 
+  - apt-get 
+  - install 
+  - -y
+dependencies:
+  core: []
+  extended: []
+repositories: {}

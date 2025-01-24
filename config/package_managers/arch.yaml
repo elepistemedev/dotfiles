@@ -1,0 +1,14 @@
+manager: pacman
+update_command: 
+  - sudo
+  - pacman
+  - -Sy
+install_command:
+  - sudo
+  - pacman
+  - -S
+  - --noconfirm
+dependencies:
+  core: []
+  extended: []
+repositories: {}
