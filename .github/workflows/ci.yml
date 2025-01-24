@@ -1,0 +1,61 @@
+name: CI
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["3.10", "3.11", "3.12", "3.13"]
+
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Install uv
+      run: |
+        curl -LsSf https://astral.sh/uv/install.sh | sh
+        echo "$HOME/.cargo/bin" >> $GITHUB_PATH
+        
+    - name: Setup Python with uv
+      run: |
+        uv venv
+        source .venv/bin/activate
+        uv pip sync requirements/requirements-dev.txt
+        
+#    - name: Run pre-commit
+#      uses: pre-commit/action@v3.0.1
+
+    - name: Run tests
+      run: |
+        source .venv/bin/activate
+        uv run pytest tests/ --cov=src --cov-report=term
+        
+    # - name: Upload coverage
+    #   uses: codecov/codecov-action@v4
+    #   with:
+    #     file: ./coverage.xml
+    #     fail_ci_if_error: true
+
+  lint:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Install uv
+      run: |
+        curl -LsSf https://astral.sh/uv/install.sh | sh
+        echo "$HOME/.cargo/bin" >> $GITHUB_PATH
+        
+    - name: Setup Python and lint
+      run: |
+        uv venv
+        source .venv/bin/activate
+        uv pip install ruff
+        uv run ruff check .
+        uv run ruff format --check .
