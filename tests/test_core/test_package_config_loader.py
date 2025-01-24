@@ -1,5 +1,8 @@
+from pathlib import Path
 import unittest
 from unittest.mock import MagicMock, mock_open, patch
+
+import yaml
 
 from src.core.package_config_loader import (
     PackageManagerConfigLoader,
@@ -52,6 +55,46 @@ class TestPackageManagerConfigLoader(unittest.TestCase):
         # Validar el resultado
         mock_load_configs.assert_not_called()  # No debería cargar de nuevo
         self.assertEqual(result, {"key": "value"})
+
+    @patch("pathlib.Path.glob")
+    @patch("builtins.print")
+    def test_load_configs_with_yaml_error(self, mock_print, mock_glob):
+        """Prueba el manejo de errores en archivos YAML inválidos"""
+        # Configurar mocks
+        fake_yaml = Path("invalid.yaml")
+        mock_glob.return_value = [fake_yaml]
+
+        # Simular archivo existente pero con YAML inválido
+        error_message = "Error de sintaxis YAML"
+        with patch("builtins.open", mock_open(read_data="invalid: yaml")):
+            with patch("yaml.safe_load", side_effect=yaml.YAMLError(error_message)):
+                PackageManagerConfigLoader.load_configs()
+
+        # Verificar mensaje de error
+        mock_print.assert_called_with(f"Error cargando configuración invalid: {error_message}")
+
+        # Verificar que no se cargó la configuración inválida
+        assert "invalid" not in PackageManagerConfigLoader._configs
+
+    @patch("pathlib.Path.glob")
+    @patch("builtins.print")
+    def test_load_configs_with_io_error(self, mock_print, mock_glob):
+        """Prueba el manejo de errores de lectura de archivos"""
+        # Configurar mocks
+        fake_yaml = Path("unreadable.yaml")
+        mock_glob.return_value = [fake_yaml]
+
+        # Simular error de archivo
+        error_message = "Permiso denegado"
+        with patch("builtins.open", mock_open()) as mock_file:
+            mock_file.side_effect = OSError(error_message)
+            PackageManagerConfigLoader.load_configs()
+
+        # Verificar mensaje de error
+        mock_print.assert_called_with(f"Error cargando configuración unreadable: {error_message}")
+
+        # Verificar que no se cargó la configuración inválida
+        assert "unreadable" not in PackageManagerConfigLoader._configs
 
 
 if __name__ == "__main__":

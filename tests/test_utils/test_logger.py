@@ -10,7 +10,7 @@ from src.utils.logger import (
 class TestSetupLogging(unittest.TestCase):
     @patch("src.utils.logger.Path")
     @patch("src.utils.logger.logging")
-    def test_crea_directorio_logs(self, mock_logging, mock_path):
+    def test_crea_directorio_logs(self, mock_path):
         """Prueba que se crea el directorio de logs si no existe."""
         mock_dir = MagicMock()
         mock_path.return_value = mock_dir

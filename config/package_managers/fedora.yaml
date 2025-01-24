@@ -118,3 +118,4 @@ dependencies:
     - gstreamer1-plugins-good-extras
     - gstreamer1-plugins-bad-free
     - gstreamer1-plugins-bad-free-devel
+    - git-delta
