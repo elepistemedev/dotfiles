@@ -6,7 +6,25 @@ logging = logging.getLogger(__name__)
 
 
 class SystemInfo:
+    """
+    Clase para recopilar información detallada del sistema operativo.
+
+    Attributes:
+        system (str): Nombre del sistema operativo en minúsculas.
+        distribution (Optional[str]): Nombre de la distribución Linux.
+        version (Optional[str]): Versión del sistema operativo.
+        package_manager (Optional[str]): Gestor de paquetes detectado.
+        update_command (Optional[List[str]]): Comando para actualizar paquetes.
+        install_command (Optional[List[str]]): Comando para instalar paquetes.
+        repositories (Optional[Dict[str, List[str]]]): Repositorios adicionales.
+        dependencies_core (Optional[List[str]]): Dependencias esenciales.
+        dependencies_extended (Optional[List[str]]): Dependencias extendidas.
+    """
+
     def __init__(self):
+        """
+        Inicializa la información del sistema, detectando detalles específicos para Linux.
+        """
         self.system = platform.system().lower()
         self.distribution = None
         self.version = None
@@ -22,7 +40,13 @@ class SystemInfo:
             self._set_package_manager()
 
     def _detect_linux_distribution(self):
-        """Detecta la distribución Linux y su versión"""
+        """
+        Detecta la distribución Linux y su versión.
+
+        Intenta obtener la información desde /etc/os-release.
+        Si falla, utiliza el comando lsb_release como respaldo.
+        Registra un error si no puede detectar la distribución.
+        """
         try:
             with open("/etc/os-release") as f:
                 lines = f.readlines()
@@ -41,7 +65,12 @@ class SystemInfo:
                 logging.error("No se pudo detectar la distribución Linux")
 
     def _set_package_manager(self):
-        """Configura el gestor de paquetes y sus comandos"""
+        """
+        Configura el gestor de paquetes y sus comandos para la distribución Linux detectada.
+
+        Establece atributos como package_manager, update_command, install_command,
+        repositories, y dependencias basado en la distribución Linux.
+        """
         package_managers = {
             "debian": {
                 "manager": "apt",
