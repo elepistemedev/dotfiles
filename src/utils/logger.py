@@ -39,7 +39,7 @@ def setup_logging(log_level: str = "INFO", logs_dir: str = "logs", app_name: str
 
 
 # Ejemplo de uso en __init__.py o en el punto de entrada de la aplicación
-if __name__ == "__main__":
-    setup_logging()
-    logger = logging.getLogger(__name__)
-    logger.info("Aplicación iniciada")
+# if __name__ == "__main__":
+#     setup_logging()
+#     logger = logging.getLogger(__name__)
+#     logger.info("Aplicación iniciada")
