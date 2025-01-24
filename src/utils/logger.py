@@ -1,4 +1,3 @@
-# src/nombre_proyecto/config/logging_config.py
 import logging
 import logging.handlers
 from pathlib import Path
