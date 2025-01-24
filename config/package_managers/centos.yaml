@@ -1,0 +1,14 @@
+manager: yum
+update_command: 
+  - sudo
+  - yum
+  - check-update
+install_command:
+  - sudo
+  - yum
+  - install
+  - -y
+dependencies:
+  core: []
+  extended: []
+repositories: {}

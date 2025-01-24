@@ -27,13 +27,13 @@ jobs:
         source .venv/bin/activate
         uv pip sync requirements/requirements-dev.txt
         
-    # - name: Run pre-commit
-    #   uses: pre-commit/action@v3.0.1
-        
-    # - name: Run tests
-    #   run: |
-    #     source .venv/bin/activate
-    #     uv run pytest tests/ --cov=src --cov-report=term
+#    - name: Run pre-commit
+#      uses: pre-commit/action@v3.0.1
+
+    - name: Run tests
+      run: |
+        source .venv/bin/activate
+        uv run pytest tests/ --cov=src --cov-report=term
         
     # - name: Upload coverage
     #   uses: codecov/codecov-action@v4
