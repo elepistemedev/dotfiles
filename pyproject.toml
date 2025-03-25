@@ -4,7 +4,12 @@ version = "0.1.0"
 description = "Instalador de paquetes y dotfiles"
 readme = "README.md"
 requires-python = ">=3.13"
-dependencies = ["inquirerpy>=0.3.4"]
+dependencies = [
+  "inquirerpy>=0.3.4",
+  "rich>=13.9.4",
+  "python-dotenv>=1.1.0",
+  "typer>=0.15.2",
+]
 
 [tool.hatch.metadata]
 allow-direct-references = true
@@ -89,6 +94,7 @@ bump = "cz bump"
 gittemplate = "git config commit.template pkm/.gitmessage.txt"
 main = "python src/roba_comics/main.py"
 extract = "python src/roba_comics/extractor.py"
+sentu = "python sentu_install.py"
 # --------------- CONFIGURACIÓN DE MYPY ---------------
 [tool.mypy]
 explicit_package_bases = true
