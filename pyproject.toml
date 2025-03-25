@@ -4,6 +4,132 @@ version = "0.1.0"
 description = "Instalador de paquetes y dotfiles"
 readme = "README.md"
 requires-python = ">=3.13"
-dependencies = [
-    "inquirerpy>=0.3.4",
+dependencies = ["inquirerpy>=0.3.4"]
+
+[tool.hatch.metadata]
+allow-direct-references = true
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/roba_comics"]
+
+# --------------- CONFIGURACIÓN DE RUFF (LINTER) ---------------
+[tool.ruff]
+# Excluir archivos generados automáticamente
+exclude = [
+  ".github/scripts/generate_badges.py",
+  "docs/badges",
+  "__pycache__",
+  "*.png",
+  "*.jpg",
+  "*.webp",
 ]
+line-length = 120 # Longitud máxima de línea recomendada
+target-version = "py39" # Versión objetivo de Python para el linting
+indent-width = 4 # Indentación estándar en Python
+
+[tool.ruff.format]
+quote-style = "double"            # Consistencia en uso de comillas
+indent-style = "space"            # Espacios en lugar de tabs
+skip-magic-trailing-comma = false
+line-ending = "auto"              # Manejo automático de finales de línea
+
+[tool.ruff.lint]
+# Reglas de linting seleccionadas para garantizar calidad de código
+select = [
+  "E",   # pycodestyle - estilo PEP 8
+  "F",   # pyflakes - errores lógicos
+  "I",   # isort - ordenamiento de imports
+  "B",   # flake8-bugbear - bugs potenciales
+  "N",   # pep8-naming - convenciones de nombres
+  "UP",  # pyupgrade - modernización de código
+  "RUF", # reglas específicas de ruff
+  # "D",   # docstring
+]
+ignore = [] # Reglas a ignorar (mantener al mínimo)
+
+# --------------- CONFIGURACIÓN DE IMPORTACIONES ---------------
+[tool.ruff.isort]
+combine-as-imports = true
+force-sort-within-sections = true
+known-first-party = []            # Módulos propios del proyecto
+known-third-party = []            # Dependencias externas
+
+# --------------- CONFIGURACIÓN DE DOCUMENTACIÓN ---------------
+[tool.ruff.pydocstyle]
+convention = "google" # Estilo de docstrings consistente
+
+[tool.ruff.pep8-naming]
+classmethod-decorators = ["classmethod"]
+
+# --------------- SISTEMA DE BUILD ---------------
+[tool.coverage.run]
+source = ["src"] # Directorio a analizar
+branch = true    # Análisis de cobertura de branches
+
+[tool.coverage.report]
+show_missing = true # Mostrar líneas sin cobertura
+skip_covered = true # Omitir archivos con 100% cobertura
+
+# --------------- SCRIPTS DE PDM ---------------
+[tool.rye.scripts]
+# Comandos útiles para desarrollo
+test-local = "pytest --cov=src --cov-report=term-missing"
+test-ci = "pytest --cov=src --cov-report=xml tests/"
+mkdocs-build = "mkdocs build"
+mkdocs-serve = "mkdocs serve"
+lint = "ruff check ."
+lint-fix = "ruff check --fix ."
+format = "ruff format ."
+format-check = "ruff format --check ."
+pre-commit-all = "pre-commit run --all-files"
+fix = { composite = ["pre-commit-all", "lint-fix", "format"] }
+commit = "cz commit"
+changelog = "cz changelog"
+bump = "cz bump"
+gittemplate = "git config commit.template pkm/.gitmessage.txt"
+main = "python src/roba_comics/main.py"
+extract = "python src/roba_comics/extractor.py"
+# --------------- CONFIGURACIÓN DE MYPY ---------------
+[tool.mypy]
+explicit_package_bases = true
+
+
+# --------------- CONFIGURACIÓN DE GITLAB FLOW ---------------
+[tool.gitlab-flow]
+# Prefijos para ramas siguiendo la metodología GitLab Flow
+main_branch = "main"        # Rama principal de producción
+development_branch = "dev"  # Rama de desarrollo (opcional, para proyectos grandes)
+feature_prefix = "feature/" # Para nuevas características (e.g., feature/issue-123-description)
+bugfix_prefix = "fix/"      # Para corrección de bugs (e.g., fix/issue-456-description)
+hotfix_prefix = "hotfix/"   # Para correcciones urgentes en producción (e.g., hotfix/issue-789-description)
+version_tag_prefix = "v"    # Prefijo para tags de versiones (e.g., v1.0.0)
+
+# Ramas de entorno (opcional, para flujos de integración continua)
+environment_branches = [
+  "staging",        # Para pruebas pre-producción
+  "pre-production", # Para validación final antes de producción
+  "production",     # Para producción
+]
+
+# Reglas adicionales para GitLab Flow
+[tool.gitlab-flow.rules]
+# Todas las ramas deben seguir un proceso de Merge Request (MR) antes de fusionarse
+require_merge_request = true
+
+# Las ramas deben pasar pruebas CI/CD antes de ser fusionadas
+require_ci_pass = true
+
+# Las ramas deben ser revisadas por al menos dos personas antes de fusionarse
+require_code_review = true
+
+# Las ramas deben estar vinculadas a un issue o ticket de trabajo
+require_linked_issue = true
+
+# Las ramas deben seguir el formato de nomenclatura definido
+branch_naming_convention = "{prefix}{issue-number}-{short-description}"
+
+# Las etiquetas de versión deben seguir SemVer (Semantic Versioning)
+versioning_scheme = "semver"
+
+# Los commits deben seguir el formato Conventional Commits
+commit_message_format = "conventional"
