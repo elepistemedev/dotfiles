@@ -5,11 +5,11 @@
 ```
 
 # dotfiles
+
 Respaldo de mis archivos de configuración para linux. Optimizado para la distro de linux Fedora.
 
 # Instalación
 
 ```bash
-curl -s https://raw.githubusercontent.com/elepistemedev/dotfiles/refs/heads/dev/sentu_install.py | python3
+curl -s https://raw.githubusercontent.com/elepistemedev/dotfiles/refs/heads/feature/better_man/sentu_install.py | python3
 ```
-
