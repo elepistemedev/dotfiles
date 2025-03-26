@@ -1,3 +1,10 @@
+# Enable Powerlevel10k instant prompt. Should stay close to the top of ~/.zshrc.
+# Initialization code that may require console input (password prompts, [y/n]
+# confirmations, etc.) must go above this block; everything else may go below.
+if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]; then
+  source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
+fi
+
 #  █▀ █▀▀ █▄░█ ▀█▀ █░█  ┎┤  Ingeniería de Datos & Data Science  ├┒
 #  ▄█ ██▄ █░▀█ ░█░ █▄█  ┖┤              en Python               ├┚
 #              .studio en
@@ -53,7 +60,9 @@ autoload -Uz compinit && compinit
 zinit cdreplay -q
 
 # Prompt
-eval "$(oh-my-posh init zsh --config $HOME/.config/ohmyposh/negligible.omp.json)"
+# eval "$(oh-my-posh init zsh --config $HOME/.config/ohmyposh/negligible.omp.json)"
+zinit ice depth"1"
+zinit light romkatv/powerlevel10k
 
 # Keybindings
 bindkey -e
@@ -95,29 +104,82 @@ alias ls='lsd -a --group-directories-first'
 alias ll='lsd -la --group-directories-first'
 
 alias clear='~/.config/sentu/logo.sh'
-alias nvim-find='nvim $(fzf --preview="bat --color=always {}")'
+
+alias batfzf='bat $(fzf --preview="bat --theme=gruvbox-dark --color=always {}")'
+alias nvimfzf='nvim $(fzf --preview="bat --theme=gruvbox-dark --color=always {}")'
+
+alias yt-m='yt-dlp -x --audio-format mp3 --audio-quality 0 '
+
 # Shell integrations
 eval "$(fzf --zsh)"
 eval "$(zoxide init --cmd cd zsh)"
-eval "$(uv generate-shell-completion zsh)"
 
 # ▄▀█ █░█ ▀█▀ █▀█   █▀ ▀█▀ ▄▀█ █▀█ ▀█▀
 # █▀█ █▄█ ░█░ █▄█   ▄█ ░█░ █▀█ █▀▄ ░█░
 
 ~/.config/sentu/logo.sh
-# >>> conda initialize >>>
-# !! Contents within this block are managed by 'conda init' !!
-__conda_setup="$('/home/el/anaconda3/bin/conda' 'shell.zsh' 'hook' 2> /dev/null)"
-if [ $? -eq 0 ]; then
-    eval "$__conda_setup"
-else
-    if [ -f "/home/el/anaconda3/etc/profile.d/conda.sh" ]; then
-        . "/home/el/anaconda3/etc/profile.d/conda.sh"
-    else
-        export PATH="/home/el/anaconda3/bin:$PATH"
-    fi
-fi
-unset __conda_setup
-# <<< conda initialize <<<
 
+export VISUAL=nvim
+autoload edit-command-line; zle -N edit-command-line
+bindkey '^X^E' edit-command-line
+# # >>> conda initialize >>>
+# # !! Contents within this block are managed by 'conda init' !!
+# __conda_setup="$('/home/el/anaconda3/bin/conda' 'shell.zsh' 'hook' 2> /dev/null)"
+# if [ $? -eq 0 ]; then
+#     eval "$__conda_setup"
+# else
+#     if [ -f "/home/el/anaconda3/etc/profile.d/conda.sh" ]; then
+#         . "/home/el/anaconda3/etc/profile.d/conda.sh"
+#     else
+#         export PATH="/home/el/anaconda3/bin:$PATH"
+#     fi
+# fi
+# unset __conda_setup
+# # <<< conda initialize <<<
+
+
+#d2 diagram
+export PATH=$HOME/.local/bin:$PATH
+
+# Editor en terminal
+export EDITOR='nvim'
+
+. "$HOME/.atuin/bin/env"
+
+eval "$(atuin init zsh)"
+
+# Cargo
+export PATH="$HOME/.cargo/bin:$PATH"
+
+# QT6
+export PATH=/usr/lib64/qt6/bin:$PATH
+export QT_SELECT=6
+
+
+# Added by LM Studio CLI (lms)
+export PATH="$PATH:/home/el/.lmstudio/bin"
+
+# Go 
+export PATH="$PATH:/home/el/go/bin"
+
+# Ollama
+export OLLAMA_NUM_THREADS=7
+
+eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
+
+# To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
+[[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
+
+source "$HOME/.rye/env"
+
+# bun completions
+[ -s "/home/el/.bun/_bun" ] && source "/home/el/.bun/_bun"
+
+# bun
+export BUN_INSTALL="$HOME/.bun"
+export PATH="$BUN_INSTALL/bin:$PATH"
+
+#uv Python
+eval "$(uv generate-shell-completion zsh)"
+eval "$(uvx --generate-shell-completion zsh)"
 
