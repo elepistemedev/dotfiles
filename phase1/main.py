@@ -1,17 +1,13 @@
 import json
 
+from common.flatpak_installer import install_flatpak
 from common.logger_utils import setup_logger
+from common.logo import show as logo
 from common.system_info import SystemInfo
 from common.system_operations import (
-    update_system,
-    install_dependencies,
-    install_and_configure_zsh,
-    clone_repo,
-    install_python_packages,
-    install_fonts, run_step, read_file
+    read_file,
+    run_step,
 )
-from common.logo import show as logo
-from common.flatpak_installer import install_flatpak
 
 logger = setup_logger()
 
@@ -26,7 +22,7 @@ def main():
     # Cargar la configuración del instalador
     config_path = "common/installer_config.json"
     config_data = json.loads(read_file(config_path))
-    
+
     # Obtener los pasos de la fase 1
     phase_1_steps = config_data.get("phase_1", {}).get("steps", [])
 
@@ -38,10 +34,12 @@ def main():
 
     # instalar flatpak
     if not install_flatpak(system_info, config_data):
-            logger.error("No se pudo instalar Flatpak")
-            
+        logger.error("No se pudo instalar Flatpak")
+
     logo("🎉 Fase 1 completada exitosamente")
-    print("Recuerda reiniciar el terminal")    
-    print("Te recuerdo configurar una fuente Nertfonts para mejor experiencia")    
-if __name__ == "__main__":    
+    print("Recuerda reiniciar el terminal")
+    print("Te recuerdo configurar una fuente Nertfonts para mejor experiencia")
+
+
+if __name__ == "__main__":
     main()
