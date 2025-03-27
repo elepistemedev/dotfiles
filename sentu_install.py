@@ -2,6 +2,7 @@ import logging
 import os
 from pathlib import Path
 import shutil
+import subprocess
 from subprocess import CalledProcessError, run
 import sys
 import tempfile
@@ -15,7 +16,6 @@ logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(
 # URL por defecto en caso de que no se encuentre en .env (ahora hardcodeada para simplicidad)
 DEFAULT_REPO_URL = "https://github.com/elepistemedev/dotfiles/archive/refs/heads/feature/better_man.zip"
 
-RYE_INSTALL_URL = "https://rye.astral.sh/get"
 RYE_EXECUTABLE = "rye"
 REPO_NAME = "dotfiles-feature-better_man"
 FINAL_FOLDER_NAME = "dotfiles"
@@ -36,7 +36,7 @@ def install_rye() -> None:
     """Instala Rye en el sistema usando el método recomendado."""
     print("\033[1m\033[94mRye no está instalado. Procediendo con la instalación...\033[0m")
     try:
-        install_command = f"curl -sSf {RYE_INSTALL_URL} | bash"
+        install_command = f"curl -sSf https://rye.astral.sh/get | bash"
         print(f"\033[1m\033[92mEjecutando comando para instalar Rye:\033[0m \033[3m{install_command}\033[0m")
         run(install_command, shell=True, check=True)
         print("\033[1m\033[92mInstalación de Rye completada.\033[0m Asegúrate de que esté en tu PATH.")
@@ -66,7 +66,13 @@ def download_and_extract(repo_url: str, extract_path: Path) -> Path:
             zip_ref.extractall(extract_path)
         extracted_path = extract_path
         print(f"\033[1m\033[92mArchivos extraídos correctamente en:\033[0m \033[3m{extracted_path}\033[0m")
-        return extracted_path
+
+        # Verificar si hay un único directorio raíz
+        extracted_content = list(extracted_path.iterdir())
+        if len(extracted_content) == 1 and extracted_content[0].is_dir():
+            return extracted_content[0]  # Retornar el directorio raíz
+        else:
+            return extracted_path  # Retornar la ruta de extracción si no hay un único directorio raíz
     except URLError as e:
         print(
             f"\033[1m\033[91mError al descargar el repositorio desde\033[0m \033[3m{repo_url}\033[0m: \033[1m{e}\033[0m",
@@ -97,12 +103,14 @@ def execute_phase1(dotfiles_path: Path) -> None:
 
     print("\033[1m\033[94mEjecutando Fase 1 desde el directorio de dotfiles...\033[0m")
     try:
-        # Agregar el directorio raíz del proyecto al PYTHONPATH
+        # Agregar el directorio raíz del proyecto al PYTHONPATH y ejecutar Fase 1
         env = dict(PYTHONPATH=str(project_root), **os.environ)
         run([sys.executable, str(main_script)], check=True, env=env)
         print("\033[1m\033[92mFase 1 ejecutada correctamente.\033[0m")
+
     except FileNotFoundError:
         print("\033[1m\033[91mEl ejecutable de Python no se encontró.\033[0m")
+
         sys.exit(1)
     except CalledProcessError as e:
         print(
@@ -136,33 +144,19 @@ if __name__ == "__main__":
     print(f"\033[1m\033[92mExtrayendo temporalmente a:\033[0m \033[3m{temp_dir_direct}\033[0m")
     extracted_path_temp = download_and_extract(repo_url_direct, temp_dir_direct)
 
-    # Identificar la carpeta raíz extraída (asumiendo que es la única)
-    extracted_content = list(extracted_path_temp.iterdir())
-    if len(extracted_content) == 1 and extracted_content[0].is_dir():
-        source_folder = extracted_content[0]
-        destination_path = home_path / final_folder_name
-        try:
-            shutil.move(str(source_folder), str(destination_path))
-            print(f"\033[1m\033[92mContenido movido a '{final_folder_name}'.\033[0m")
-            final_dotfiles_path = destination_path
-        except FileNotFoundError:
-            print("\033[1m\033[91mError: La carpeta temporal no se encontró.\033[0m")
-            sys.exit(1)
-        except OSError as e:
-            print(f"\033[1m\033[91mError al mover la carpeta: {e}\033[0m")
-            sys.exit(1)
-    else:
-        print(
-            "\033[1m\033[91mError: La estructura del archivo zip no es la esperada (un único directorio raíz).\033[0m"
-        )
-        print(f"\033[1m\033[91mContenido extraído en: {extracted_path_temp}\033[0m")
+    destination_path = home_path / final_folder_name
+    try:
+        shutil.move(str(extracted_path_temp), str(destination_path))
+        print(f"\033[1m\033[92mContenido movido a \'{final_folder_name}\'.\033[0m")
+        final_dotfiles_path = destination_path
+    except FileNotFoundError:
+        print("\033[1m\033[91mError: La carpeta temporal no se encontró.\033[0m")
+        sys.exit(1)
+    except OSError as e:
+        print(f"\033[1m\033[91mError al mover la carpeta: {e}\033[0m")
         sys.exit(1)
 
     print("\033[1m\033[94mEjecutando Fase 1...\033[0m")
     execute_phase1(final_dotfiles_path)
 
-    # Limpieza del directorio temporal
-    print(f"\033[1m\033[92mLimpiando el directorio temporal: {temp_dir_direct}\033[0m")
-    shutil.rmtree(temp_dir_direct, ignore_errors=True)
-    print("\033[1m\033[92mDirectorio temporal eliminado.\033[0m")
     sys.exit(0)
