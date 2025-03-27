@@ -90,14 +90,29 @@ def download_and_extract(repo_url: str, extract_path: Path) -> Path:
         print(e)
         sys.exit(1)
 
-
-def execute_phase1(dotfiles_path: Path) -> None:
+def execute_phase1() -> None:
     """Ejecuta el script de la primera fase desde el directorio de dotfiles."""
+    home_path = Path.home()
+    final_folder_name = FINAL_FOLDER_NAME
+    dotfiles_path = home_path / final_folder_name
+
+    # Verificar si la carpeta dotfiles existe y tiene archivos
+    if dotfiles_path.exists():
+        # Eliminar archivos dentro de la carpeta si existen
+        if dotfiles_path.is_dir():
+            for item in dotfiles_path.iterdir():
+                if item.is_file():
+                    item.unlink()  # Eliminar el archivo
+                elif item.is_dir():
+                    shutil.rmtree(item)
+    else:
+        # Si no existe, crearla
+        dotfiles_path.mkdir(parents=True, exist_ok=True)
+
     main_script = dotfiles_path / "phase1" / "main.py"
     project_root = dotfiles_path
-
-    print(f"\033[1m\033[94mBuscando archivo main.py en:\033[0m \033[3m{main_script}\033[0m")
-    if not main_script.exists():
+    
+    if not (main_script).exists():
         print(f"\033[1m\033[91mEl archivo main.py no existe en:\033[0m \033[3m{main_script}\033[0m")
         sys.exit(1)
 
@@ -110,7 +125,6 @@ def execute_phase1(dotfiles_path: Path) -> None:
 
     except FileNotFoundError:
         print("\033[1m\033[91mEl ejecutable de Python no se encontró.\033[0m")
-
         sys.exit(1)
     except CalledProcessError as e:
         print(
@@ -144,19 +158,26 @@ if __name__ == "__main__":
     print(f"\033[1m\033[92mExtrayendo temporalmente a:\033[0m \033[3m{temp_dir_direct}\033[0m")
     extracted_path_temp = download_and_extract(repo_url_direct, temp_dir_direct)
 
+    # Mover el contenido a $HOME/dotfiles/
+    home_path = Path.home()
+    final_folder_name = FINAL_FOLDER_NAME
     destination_path = home_path / final_folder_name
-    try:
-        shutil.move(str(extracted_path_temp), str(destination_path))
-        print(f"\033[1m\033[92mContenido movido a \'{final_folder_name}\'.\033[0m")
-        final_dotfiles_path = destination_path
-    except FileNotFoundError:
-        print("\033[1m\033[91mError: La carpeta temporal no se encontró.\033[0m")
-        sys.exit(1)
-    except OSError as e:
-        print(f"\033[1m\033[91mError al mover la carpeta: {e}\033[0m")
-        sys.exit(1)
+
+    # Mover el contenido a la carpeta destino
+    for item in extracted_path_temp.iterdir():
+        if destination_path.exists():
+            if item.is_dir():
+                shutil.move(str(item), str(destination_path))
+            else:
+                shutil.move(str(item),str(destination_path))
+        else:
+            if item.is_dir():
+                shutil.move(str(item),str(home_path))
+            else:
+                shutil.move(str(item),str(home_path))
+    os.rename(home_path / REPO_NAME, home_path/FINAL_FOLDER_NAME)
+    shutil.rmtree(temp_dir_direct, ignore_errors=True)
 
     print("\033[1m\033[94mEjecutando Fase 1...\033[0m")
-    execute_phase1(final_dotfiles_path)
-
+    execute_phase1()
     sys.exit(0)
