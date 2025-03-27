@@ -161,19 +161,14 @@ if __name__ == "__main__":
     destination_path = home_path / final_folder_name
 
     logging.info(f"extracted_path_temp: {extracted_path_temp}")
-    
+
+    os.remove(temp_dir_direct / "repo.zip")
+
     # Mover el contenido a la carpeta destino
     for item in extracted_path_temp.iterdir():
         logging.info(f"Moviendo: {item} a {destination_path}")
-        shutil.move(str(item),str(destination_path))
-        
-    os.remove(temp_dir_direct/"repo.zip")
+        shutil.move(str(item), str(destination_path))
 
-
-    logging.info(f"extracted_path_temp: {extracted_path_temp}")
-    for item in extracted_path_temp.iterdir():        
-        logging.info(f"Moviendo: {item} a {destination_path}")
-        shutil.move(str(item),str(destination_path))
     shutil.rmtree(temp_dir_direct, ignore_errors=True)
     print("\033[1m\033[94mEjecutando Fase 1...\033[0m")
     execute_phase1()
