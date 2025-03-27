@@ -68,11 +68,12 @@ def download_and_extract(repo_url: str, extract_path: Path) -> Path:
         print(f"\033[1m\033[92mArchivos extraídos correctamente en:\033[0m \033[3m{extracted_path}\033[0m")
 
         # Verificar si hay un único directorio raíz
-        extracted_content = list(extracted_path.iterdir())
-        if len(extracted_content) == 1 and extracted_content[0].is_dir():
-            return extracted_content[0]  # Retornar el directorio raíz
+        extracted_content = list(extracted_path.iterdir())        
+        if len(extracted_content) == 1 and extracted_content[0].is_dir():            
+            return extracted_content[0]
         else:
-            return extracted_path  # Retornar la ruta de extracción si no hay un único directorio raíz
+            return extracted_path
+
     except URLError as e:
         print(
             f"\033[1m\033[91mError al descargar el repositorio desde\033[0m \033[3m{repo_url}\033[0m: \033[1m{e}\033[0m",
@@ -90,21 +91,20 @@ def download_and_extract(repo_url: str, extract_path: Path) -> Path:
         print(e)
         sys.exit(1)
 
-def execute_phase1() -> None:
-    """Ejecuta el script de la primera fase desde el directorio de dotfiles."""
+
+def execute_phase1() -> None:    
+    """Ejecuta el script de la primera fase desde el directorio de dotfiles."""    
     home_path = Path.home()
     final_folder_name = FINAL_FOLDER_NAME
     dotfiles_path = home_path / final_folder_name
-
-    # Verificar si la carpeta dotfiles existe y tiene archivos
-    if dotfiles_path.exists():
-        # Eliminar archivos dentro de la carpeta si existen
-        if dotfiles_path.is_dir():
-            for item in dotfiles_path.iterdir():
-                if item.is_file():
-                    item.unlink()  # Eliminar el archivo
-                elif item.is_dir():
-                    shutil.rmtree(item)
+    if not dotfiles_path.exists():
+        dotfiles_path.mkdir(parents=True, exist_ok=True)    
+    else:
+        for item in dotfiles_path.iterdir():
+            if item.is_file():                
+                item.unlink()  
+            elif item.is_dir():
+                shutil.rmtree(item)
     else:
         # Si no existe, crearla
         dotfiles_path.mkdir(parents=True, exist_ok=True)
@@ -163,21 +163,26 @@ if __name__ == "__main__":
     final_folder_name = FINAL_FOLDER_NAME
     destination_path = home_path / final_folder_name
 
-    # Mover el contenido a la carpeta destino
-    for item in extracted_path_temp.iterdir():
-        if destination_path.exists():
-            if item.is_dir():
-                shutil.move(str(item), str(destination_path))
-            else:
-                shutil.move(str(item),str(destination_path))
-        else:
-            if item.is_dir():
-                shutil.move(str(item),str(home_path))
-            else:
-                shutil.move(str(item),str(home_path))
-    os.rename(home_path / REPO_NAME, home_path/FINAL_FOLDER_NAME)
-    shutil.rmtree(temp_dir_direct, ignore_errors=True)
+    logging.info(f"extracted_path_temp: {extracted_path_temp}")
+    if not destination_path.exists():
+        destination_path.mkdir(parents=True, exist_ok=True)
 
+    # Mover el contenido a la carpeta destino
+    for item in extracted_path_temp.iterdir():        
+        if (destination_path).exists():
+            logging.info(f"Moviendo: {item} a {destination_path}")
+            shutil.move(str(item),str(destination_path))
+        else:
+            destination_path.mkdir(parents=True, exist_ok=True)
+            logging.info(f"Moviendo: {item} a {destination_path}")
+            shutil.move(str(item),str(destination_path))
+
+
+    logging.info(f"extracted_path_temp: {extracted_path_temp}")
+    for item in extracted_path_temp.iterdir():        
+        logging.info(f"Moviendo: {item} a {destination_path}")
+        shutil.move(str(item),str(destination_path))
+    shutil.rmtree(temp_dir_direct, ignore_errors=True)
     print("\033[1m\033[94mEjecutando Fase 1...\033[0m")
     execute_phase1()
     sys.exit(0)
