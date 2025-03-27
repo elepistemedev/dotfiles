@@ -42,6 +42,12 @@ def install_rye() -> None:
         logging.info(
             "Es posible que necesites cerrar y volver a abrir tu terminal para que Rye esté disponible en tu PATH."
         )
+        # Source Rye's environment
+        source_command = f'source "$HOME/.rye/env"'
+        logging.info(
+            f"\033[1m\033[92mEjecutando comando para agregar Rye al PATH:\033[0m \033[3m{source_command}\033[0m"
+        )
+        run(source_command, shell=True, check=True, executable="/bin/bash")
     except CalledProcessError as e:
         logging.error(f"Error al ejecutar el comando de instalación de Rye: {e}")
         sys.exit(1)
@@ -105,14 +111,29 @@ def move_contents(source: Path, destination: Path) -> None:
 
 def execute_phase1(dotfiles_path: Path) -> None:
     """Ejecuta el script de la primera fase desde el directorio de dotfiles."""
+    home_path = Path.home()
+    final_folder_name = FINAL_FOLDER_NAME
+    dotfiles_path = home_path / final_folder_name
+    if dotfiles_path.exists():
+        for item in dotfiles_path.iterdir():
+            if item.is_file():
+                item.unlink()
+            elif item.is_dir():
+                shutil.rmtree(item)
+    else:
+        dotfiles_path.mkdir(parents=True, exist_ok=True)
+
     main_script = dotfiles_path / "phase1" / "main.py"
+    project_root = dotfiles_path
     if not main_script.exists():
         logging.error(f"El archivo main.py no existe en: {main_script}")
         sys.exit(1)
 
     logging.info("Ejecutando Fase 1 desde el directorio de dotfiles...")
     try:
-        subprocess.run([sys.executable, str(main_script)], check=True)
+        env = dict(PYTHONPATH=str(project_root), **os.environ)
+        command = [RYE_EXECUTABLE, "run", "python", str(main_script)]
+        run(command, check=True, env=env)
         logging.info("Fase 1 ejecutada correctamente.")
     except subprocess.CalledProcessError as e:
         logging.error(f"Error durante la ejecución de Fase 1: {e}")
