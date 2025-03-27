@@ -1,4 +1,5 @@
 import logging
+import os
 from pathlib import Path
 import shutil
 import subprocess
@@ -43,7 +44,7 @@ def install_rye() -> None:
             "Es posible que necesites cerrar y volver a abrir tu terminal para que Rye esté disponible en tu PATH."
         )
         # Source Rye's environment
-        source_command = f'source "$HOME/.rye/env"'
+        source_command = 'source "$HOME/.rye/env"'
         logging.info(
             f"\033[1m\033[92mEjecutando comando para agregar Rye al PATH:\033[0m \033[3m{source_command}\033[0m"
         )
