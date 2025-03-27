@@ -1,9 +1,13 @@
+import json
+from pathlib import Path
 import platform
 import subprocess
 
 from .logger_utils import setup_logger
 
 logging = setup_logger()
+
+COMMON_DIR = Path(__file__).parent
 
 
 class SystemInfo:
@@ -18,9 +22,24 @@ class SystemInfo:
         self.dependencies_core = None
         self.dependencies_extended = None
 
+        self.config = self._load_config()
+
         if self.system == "linux":
             self._detect_linux_distribution()
-            self._set_package_manager()
+            self._set_package_manager_from_config()
+
+    def _load_config(self):
+        """Carga la configuración desde el archivo JSON."""
+        config_path = COMMON_DIR / "installer_config.json"
+        try:
+            with open(config_path, "r") as f:
+                return json.load(f)
+        except FileNotFoundError:
+            logging.error(f"No se encontró el archivo de configuración: {config_path}")
+            return {}
+        except json.JSONDecodeError:
+            logging.error(f"Error al decodificar el archivo JSON: {config_path}")
+            return {}
 
     def _detect_linux_distribution(self):
         """Detecta la distribución Linux y su versión"""
@@ -39,176 +58,26 @@ class SystemInfo:
                 )
                 self.version = subprocess.check_output(["lsb_release", "-sr"], universal_newlines=True).strip()
             except (subprocess.CalledProcessError, FileNotFoundError):
-                logging.error("No se pudo detectar la distribución Linux")
+                logging.warning("No se pudo detectar la distribución Linux completamente.")
+                self.distribution = "unknown"
 
-    def _set_package_manager(self):
-        """Configura el gestor de paquetes y sus comandos"""
-        package_managers = {
-            "debian": {
-                "manager": "apt",
-                "update": ["sudo", "apt-get", "update"],
-                "install": ["sudo", "apt-get", "install", "-y"],
-            },
-            "ubuntu": {
-                "manager": "apt",
-                "update": ["sudo", "apt-get", "update"],
-                "install": ["sudo", "apt-get", "install", "-y"],
-            },
-            "fedora": {
-                "manager": "dnf",
-                "update": ["sudo", "dnf", "update", "-y"],
-                "install": ["sudo", "dnf", "install", "-y", "--allowerasing"],
-                "repo": {
-                    "rpmfusion-nonfree": [
-                        "sudo",
-                        "dnf",
-                        "install",
-                        "-y",
-                        f"https://download1.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-{self.version}.noarch.rpm",
-                    ],
-                    "rpmfusion-free": [
-                        "sudo",
-                        "dnf",
-                        "install",
-                        "-y",
-                        f"https://download1.rpmfusion.org/free/fedora/rpmfusion-free-release-{self.version}.noarch.rpm",
-                    ],
-                    "docker": [
-                        "sudo",
-                        "dnf",
-                        "config-manager",
-                        "addrepo",
-                        "--from-repofile=https://download.docker.com/linux/fedora/docker-ce.repo",
-                    ],
-                    "google-chrome": [
-                        "sudo",
-                        "dnf",
-                        "install",
-                        "-y",
-                        "https://dl.google.com/linux/direct/google-chrome-stable_current_x86_64.rpm",
-                    ],
-                    "lazygit": ["sudo", "dnf", "copr", "enable", "atim/lazygit", "-y"],
-                },
-                "dependencies": {
-                    "core": [
-                        "git",
-                        "curl",
-                        "wget",
-                        "gcc",
-                        "make",
-                        "unzip",
-                        "zsh",
-                        "golang",
-                        "cargo",
-                        "g++",
-                        "python3",
-                        "ruby",
-                        "unrar",
-                        "p7zip",
-                        "p7zip-plugins",
-                        "xdg-user-dirs",
-                        "lsd",
-                        "java",
-                        "dnf-utils",
-                        "flatpak",
-                        "kernel-devel",
-                        "gcc",
-                        "make",
-                        "automake",
-                        "perl",
-                        "elfutils-libelf-devel",
-                    ],
-                    "extended": [
-                        "lazygit",
-                        "ripgrep",
-                        "fd-find",
-                        "neovim",
-                        "fastfetch",
-                        "util-linux-user",
-                        "anacron",
-                        "neovim",
-                        "python3-neovim",
-                        "kitty",
-                        "lua-devel",
-                        "luarocks",
-                        "docker-ce",
-                        "docker-ce-cli",
-                        "containerd.io",
-                        "docker-compose-plugin",
-                        "bat",
-                        "fzf",
-                        "httpie",
-                        "ripgrep",
-                        "tmux",
-                        "htop",
-                        "proselint",
-                        "lm_sensors",
-                        "discord",
-                        "alacritty",
-                        "kde-connect",
-                        "dnf-utils",
-                        "kdenlive",
-                        "openshot",
-                        "vlc",
-                        "mpv",
-                        "gnome-mpv",
-                        "soundconverter",
-                        "audacity",
-                        "muse",
-                        "lmms",
-                        "amarok",
-                        "flowblade",
-                        "dnf-plugins-core",
-                        "xine-lib",
-                        "xine-lib-extras",
-                        "xine-lib-extras-freeworld",
-                        "libdvdread",
-                        "libdvdnav",
-                        "lsdvd",
-                        "libdvbpsi",
-                        "ffmpeg",
-                        "libmatroska",
-                        "xvidcore",
-                        "gimp",
-                        "inkscape",
-                        "libreoffice-writer",
-                        "libreoffice-calc",
-                        "libreoffice-impress",
-                        "libreoffice-draw",
-                        "libreoffice-langpack-es",
-                        "gstreamer1-devel",
-                        "gstreamer1-plugins-base-tools",
-                        "gstreamer1-doc",
-                        "gstreamer1-plugins-base-devel",
-                        "gstreamer1-plugins-good",
-                        "gstreamer1-plugins-good-extras",
-                        "gstreamer1-plugins-bad-free",
-                        "gstreamer1-plugins-bad-free-devel",
-                    ],
-                },
-            },
-            "centos": {
-                "manager": "yum",
-                "update": ["sudo", "yum", "check-update"],
-                "install": ["sudo", "yum", "install", "-y"],
-            },
-            "arch": {
-                "manager": "pacman",
-                "update": ["sudo", "pacman", "-Sy"],
-                "install": ["sudo", "pacman", "-S", "--noconfirm"],
-            },
-            "manjaro": {
-                "manager": "pacman",
-                "update": ["sudo", "pacman", "-Sy"],
-                "install": ["sudo", "pacman", "-S", "--noconfirm"],
-            },
-        }
-
-        if self.distribution in package_managers:
-            pm_info = package_managers[self.distribution]
-            self.package_manager = pm_info["manager"]
-            self.update_command = pm_info["update"]
-            self.install_command = pm_info["install"]
-            self.repositories = pm_info.get("repo", {})
-            self.dependencies_core = pm_info.get("dependencies", {}).get("core", [])
-            self.dependencies_extended = pm_info.get("dependencies", {}).get("extended", [])
+    def _set_package_manager_from_config(self):
+        """Establece el gestor de paquetes y comandos desde la configuración."""
+        if (
+            self.config
+            and "sentu_install" in self.config
+            and "package_managers" in self.config["sentu_install"]
+            and self.system in self.config["sentu_install"]["package_managers"]
+        ):
+            system_config = self.config["sentu_install"]["package_managers"][self.system]
+            if self.distribution in system_config:
+                distro_config = system_config[self.distribution]
+                self.package_manager = distro_config.get("manager")
+                self.update_command = distro_config.get("update")
+                self.install_command = distro_config.get("install")
+                self.dependencies_core = distro_config.get("dependencies", {}).get("core", [])
+                self.dependencies_extended = distro_config.get("dependencies", {}).get("extended", [])
+            else:
+                logging.warning(f"No se encontró configuración para la distribución: {self.distribution}")
+        else:
+            logging.warning(f"No se encontró configuración para el sistema operativo: {self.system}")

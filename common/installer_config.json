@@ -1,0 +1,301 @@
+{
+  "sentu_install": {
+    "package_managers": {
+      "linux": {
+        "fedora": {
+          "manager": "dnf",
+          "update": ["sudo", "dnf", "check-update"],
+          "install": ["sudo", "dnf", "install", "-y", "--allowerasing"],
+          "dependencies": {
+            "core": [
+              "git",
+              "curl",
+              "wget",
+              "gcc",
+              "make",
+              "unzip",
+              "zsh",
+              "golang",
+              "cargo",
+              "g++",
+              "python3",
+              "ruby",
+              "unrar",
+              "p7zip",
+              "p7zip-plugins",
+              "xdg-user-dirs",
+              "lsd",
+              "java",
+              "dnf-utils",
+              "flatpak",
+              "kernel-devel",
+              "gcc",
+              "make",
+              "automake",
+              "perl",
+              "elfutils-libelf-devel"
+            ],
+            "extended": ["lazygit"],
+            "rye": ["python3-devel", "gcc"]
+          },
+          "repositories": {
+            "rpmfusion-nonfree": [
+              "sudo",
+              "dnf",
+              "install",
+              "-y",
+              "https://download1.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-$(rpm -E %fedora).noarch.rpm"
+            ],
+            "rpmfusion-free": [
+              "sudo",
+              "dnf",
+              "install",
+              "-y",
+              "https://download1.rpmfusion.org/free/fedora/rpmfusion-free-release-$(rpm -E %fedora).noarch.rpm"
+            ],
+            "docker": [
+              "sudo",
+              "dnf",
+              "config-manager",
+              "--add-repo",
+              "https://download.docker.com/linux/fedora/docker-ce.repo"
+            ],
+            "google-chrome": [
+              "sudo",
+              "dnf",
+              "install",
+              "-y",
+              "https://dl.google.com/linux/direct/google-chrome-stable_current_x86_64.rpm"
+            ],
+            "lazygit": ["sudo", "dnf", "copr", "enable", "atim/lazygit", "-y"]
+          }
+        },
+        "ubuntu": {
+          "manager": "apt",
+          "update": ["sudo", "apt", "update"],
+          "install": ["sudo", "apt", "install", "-y"],
+          "dependencies": {
+            "core": [
+              "git",
+              "curl",
+              "wget",
+              "zsh",
+              "python3",
+              "build-essential",
+              "unzip",
+              "lsd",
+              "java",
+              "default-jdk",
+              "pkg-config",
+              "software-properties-common",
+              "gnupg"
+            ],
+            "extended": ["lazygit"],
+            "rye": ["python3-dev", "build-essential"]
+          }
+        },
+        "debian": {
+          "manager": "apt",
+          "update": ["sudo", "apt", "update"],
+          "install": ["sudo", "apt", "install", "-y"],
+          "dependencies": {
+            "core": [
+              "git",
+              "curl",
+              "wget",
+              "zsh",
+              "python3",
+              "build-essential",
+              "unzip",
+              "lsd",
+              "java",
+              "default-jdk",
+              "pkg-config",
+              "software-properties-common",
+              "gnupg"
+            ],
+            "extended": ["lazygit"],
+            "rye": ["python3-dev", "build-essential"]
+          }
+        },
+        "arch": {
+          "manager": "pacman",
+          "update": ["sudo", "pacman", "-Sy"],
+          "install": ["sudo", "pacman", "-S", "--noconfirm"],
+          "dependencies": {
+            "core": [
+              "git",
+              "curl",
+              "wget",
+              "zsh",
+              "python",
+              "unzip",
+              "lsd",
+              "openjdk",
+              "base-devel"
+            ],
+            "extended": ["lazygit"],
+            "rye": ["python-devel", "gcc"]
+          }
+        },
+        "manjaro": {
+          "manager": "pacman",
+          "update": ["sudo", "pacman", "-Sy"],
+          "install": ["sudo", "pacman", "-S", "--noconfirm"],
+          "dependencies": {
+            "core": [
+              "git",
+              "curl",
+              "wget",
+              "zsh",
+              "python",
+              "unzip",
+              "lsd",
+              "openjdk",
+              "base-devel"
+            ],
+            "extended": ["lazygit"],
+            "rye": ["python-devel", "gcc"]
+          }
+        }
+      },
+      "darwin": {}
+    },
+    "uv_install_command": "curl -LsSf https://astral.sh/uv/install.sh | sh",
+    "install_fonts_commands": [
+      {
+        "command": "git clone --depth 1 https://github.com/ryanoasis/nerd-fonts.git ~/.fonts-nerd",
+        "description": "Clonar Nerd Fonts"
+      },
+      {
+        "command": "bash ~/.fonts-nerd/install.sh",
+        "description": "Ejecutar script de instalación de Nerd Fonts"
+      },
+      {
+        "command": "rm -rf ~/.fonts-nerd",
+        "description": "Eliminar directorio temporal"
+      },
+      {
+        "command": "fc-cache -fv",
+        "description": "Actualizar caché de fuentes"
+      }
+    ]
+  },
+  "phase_1": {
+    "steps": [
+      { "task": "update_system" },
+      { "task": "install_dependencies", "group": "core" },
+      { "task": "install_and_configure_zsh" },
+      { "task": "clone_repo" },
+      { "task": "install_uv" },
+      { "task": "install_python_packages" },
+      { "task": "install_prompt" },
+      { "task": "install_flatpak" },
+      { "task": "install_fonts" }
+    ],
+    "flatpak_commands": {
+      "apt": [
+        "sudo",
+        "apt",
+        "install",
+        "-y",
+        "flatpak",
+        "gnome-software-plugin-flatpak"
+      ],
+      "dnf": ["sudo", "dnf", "install", "-y", "flatpak"],
+      "pacman": ["sudo", "pacman", "-S", "--noconfirm", "flatpak"],
+      "zypper": ["sudo", "zypper", "install", "-y", "flatpak"],
+      "emerge": ["sudo", "emerge", "-av", "sys-apps/flatpak"]
+    }
+  },
+  "phase_2": {
+    "steps": [
+      { "task": "update_system" },
+      { "task": "install_dependencies", "group": "extended" },
+      { "task": "install_lazyvim" },
+      { "task": "install_luapack" },
+      { "task": "configurar_docker" },
+      { "task": "install_post_install" },
+      { "task": "install_dotfiles" }
+    ],
+    "install_lazyvim": {
+      "command": "git clone --depth=1 https://github.com/LazyVim/LazyVim.git ~/.config/nvim && nvim -u ~/.config/nvim/init.lua",
+      "description": "Clonando e inicializando LazyVim"
+    },
+    "install_luapack": {
+      "command": "git clone https://github.com/LunarVim/luapack ~/.local/share/lunarvim/luapack",
+      "description": "Clonando luapack"
+    },
+    "configurar_docker": {
+      "fedora": [
+        {
+          "command": ["sudo", "systemctl", "start", "docker"],
+          "description": "Iniciando el servicio de Docker"
+        },
+        {
+          "command": ["sudo", "systemctl", "enable", "docker.service"],
+          "description": "Habilitando Docker al inicio"
+        },
+        {
+          "command": ["sudo", "usermod", -1, "-G", "docker", "$USER"],
+          "description": "Añadiendo el usuario al grupo docker (puede requerir reiniciar sesión)"
+        }
+      ],
+      "ubuntu": [
+        {
+          "command": ["sudo", "systemctl", "start", "docker"],
+          "description": "Iniciando el servicio de Docker"
+        },
+        {
+          "command": ["sudo", "systemctl", "enable", "docker.service"],
+          "description": "Habilitando Docker al inicio"
+        },
+        {
+          "command": ["sudo", "usermod", -1, "-G", "docker", "$USER"],
+          "description": "Añadiendo el usuario al grupo docker (puede requerir reiniciar sesión)"
+        }
+      ]
+    },
+    "install_post_install_commands": [
+      {
+        "command": "curl -s https://ohmyposh.dev/install.sh | bash -s -- -d ~/bin",
+        "description": "Instalando Oh My Posh"
+      },
+      {
+        "command": "go install oss.terrastruct.com/d2@latest",
+        "description": "Instalando d2 diagram"
+      },
+      {
+        "command": "curl -fsS https://dl.brave.com/install.sh | sh",
+        "description": "Instalando Brave"
+      },
+      {
+        "command": "git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm",
+        "description": "Configurando tmux plugin manager"
+      },
+      {
+        "command": "tmux source ~/.tmux.conf",
+        "description": "Activando tmux"
+      },
+      {
+        "command": "gem install tmuxinator",
+        "description": "Instalando tmuxinator"
+      },
+      {
+        "command": "flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo",
+        "description": "Actualizando repo Flatpak"
+      },
+      {
+        "command": "flatpak install flathub md.obsidian.Obsidian -y",
+        "description": "Instalando Obsidian"
+      },
+      {
+        "command": "flatpak install flathub org.freedownloadmanager.Manager -y",
+        "description": "Instalando FDM"
+      }
+    ],
+    "install_dotfiles": {
+      "description": "La instalación de dotfiles se maneja en el script install_dot.py"
+    }
+  }
+}
