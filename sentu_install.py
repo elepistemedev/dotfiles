@@ -105,10 +105,6 @@ def execute_phase1() -> None:
                 item.unlink()  
             elif item.is_dir():
                 shutil.rmtree(item)
-    else:
-        # Si no existe, crearla
-        dotfiles_path.mkdir(parents=True, exist_ok=True)
-
     main_script = dotfiles_path / "phase1" / "main.py"
     project_root = dotfiles_path
     
