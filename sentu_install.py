@@ -15,7 +15,7 @@ logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(
 # URL por defecto en caso de que no se encuentre en .env (ahora hardcodeada para simplicidad)
 DEFAULT_REPO_URL = "https://github.com/elepistemedev/dotfiles/archive/refs/heads/feature/better_man.zip"
 
-RYE_INSTALL_URL = "https://rye-up.com/install"
+RYE_INSTALL_URL = "https://rye.astral.sh/get"
 RYE_EXECUTABLE = "rye"
 
 
@@ -31,72 +31,53 @@ def is_rye_installed() -> bool:
 
 
 def install_rye() -> None:
-    """Instala Rye en el sistema."""
-    print("[bold blue]Rye no está instalado. Procediendo con la instalación...[/bold blue]")
+    """Instala Rye en el sistema usando el método recomendado."""
+    print("\033[1m\033[94mRye no está instalado. Procediendo con la instalación...\033[0m")
     try:
-        with urllib.request.urlopen(RYE_INSTALL_URL) as response:
-            install_script = response.read().decode("utf-8")
-
-        # Guardar el script de instalación en un archivo temporal
-        with tempfile.NamedTemporaryFile(mode="w", delete=False, suffix=".sh") as tmp_file:
-            tmp_file.write(install_script)
-            install_script_path = tmp_file.name
-
-        # Ejecutar el script de instalación
-        print(
-            f"[bold green]Ejecutando script de instalación de Rye desde:[/bold green] [italic]{install_script_path}[/italic]"
-        )
-        run(["sh", install_script_path], check=True)
-        print("[bold green]Instalación de Rye completada.[/bold green] Asegúrate de que esté en tu PATH.")
-        print("\n[bold red]********************************************************************[/bold red]")
-        print("[bold red]¡Importante! Es posible que necesites cerrar y volver a abrir tu terminal[/bold red]")
-        print("[bold red]para que Rye esté disponible en tu PATH.[/bold red]")
-        print("[bold red]********************************************************************[/bold red]\n")
-    except URLError as e:
-        print(
-            f"[bold red]Error al descargar el script de instalación de Rye desde[/bold red] [italic]{RYE_INSTALL_URL}[/italic]: [bold]{e}[/bold]",
-            style="red",
-        )
-        sys.exit(1)
+        install_command = f"curl -sSf {RYE_INSTALL_URL} | bash"
+        print(f"\033[1m\033[92mEjecutando comando para instalar Rye:\033[0m \033[3m{install_command}\033[0m")
+        run(install_command, shell=True, check=True)
+        print("\033[1m\033[92mInstalación de Rye completada.\033[0m Asegúrate de que esté en tu PATH.")
+        print("\n\033[1m\033[91m********************************************************************\033[0m")
+        print("\033[1m\033[91m¡Importante! Es posible que necesites cerrar y volver a abrir tu terminal\033[0m")
+        print("\033[1m\033[91mpara que Rye esté disponible en tu PATH.\033[0m")
+        print("\033[1m\033[91m********************************************************************\033[0m\n")
     except CalledProcessError as e:
-        print(f"[bold red]Error al ejecutar el script de instalación de Rye:[/bold red] [bold]{e}[/bold]", style="red")
+        print(f"\033[1m\033[91mError al ejecutar el comando de instalación de Rye:\033[0m \033[1m{e}\033[0m")
         sys.exit(1)
     except Exception as e:
-        print("[bold red]Error inesperado al instalar Rye:[/bold red]", style="red")
+        print("\033[1m\033[91mError inesperado al instalar Rye:\033[0m")
         print(e)
         sys.exit(1)
-    finally:
-        if "install_script_path" in locals() and os.path.exists(install_script_path):
-            os.remove(install_script_path)
 
 
 def download_and_extract(repo_url: str, temp_dir: Path) -> Path:
     """Descarga y extrae el repositorio en un directorio temporal."""
     zip_path = temp_dir / "repo.zip"
     try:
-        print("[bold blue]Descargando repositorio...[/bold blue]")
+        print("\033[1m\033[94mDescargando repositorio...\033[0m")
         urllib.request.urlretrieve(repo_url, zip_path)
-        print(f"[bold green]Repositorio descargado correctamente en:[/bold green] [italic]{zip_path}[/italic]")
+        print(f"\033[1m\033[92mRepositorio descargado correctamente en:\033[0m \033[3m{zip_path}\033[0m")
 
-        print("[bold blue]Extrayendo archivos...[/bold blue]")
+        print("\033[1m\033[94mExtrayendo archivos...\033[0m")
         with zipfile.ZipFile(zip_path, "r") as zip_ref:
             zip_ref.extractall(temp_dir)
         extracted_path = temp_dir
-        print(f"[bold green]Archivos extraídos correctamente en:[/bold green] [italic]{extracted_path}[/italic]")
+        print(f"\033[1m\033[92mArchivos extraídos correctamente en:\033[0m \033[3m{extracted_path}\033[0m")
         return extracted_path
     except URLError as e:
         print(
-            f"[bold red]Error al descargar el repositorio desde[/bold red] [italic]{repo_url}[/italic]: [bold]{e}[/bold]",
-            style="red",
+            f"\033[1m\033[91mError al descargar el repositorio desde\033[0m \033[3m{repo_url}\033[0m: \033[1m{e}\033[0m",
         )
         sys.exit(1)
     except zipfile.BadZipFile:
-        print("[bold red]El archivo descargado no es un archivo ZIP válido:[/bold red] [bold]{e}[/bold]", style="red")
+        print(
+            "\033[1m\033[91mEl archivo descargado no es un archivo ZIP válido:\033[0m \033[1m{e}\033[0m",
+        )
         sys.exit(1)
     except Exception as e:
         print(
-            "[bold red]Error inesperado al descargar o extraer el repositorio:[/bold red]",
-            style="red",
+            "\033[1m\033[91mError inesperado al descargar o extraer el repositorio:\033[0m",
         )
         print(e)
         sys.exit(1)
@@ -107,26 +88,30 @@ def execute_phase1(temp_dir: Path) -> None:
     main_script = temp_dir / "dotfiles-dev" / "phase1" / "main.py"
     project_root = temp_dir / "dotfiles-dev"
 
-    print(f"[bold blue]Buscando archivo main.py en:[/bold blue] [italic]{main_script}[/italic]")
+    print(f"\033[1m\033[94mBuscando archivo main.py en:\033[0m \033[3m{main_script}\033[0m")
     if not main_script.exists():
-        print(f"[bold red]El archivo main.py no existe en:[/bold red] [italic]{main_script}[/italic]")
+        print(f"\033[1m\033[91mEl archivo main.py no existe en:\033[0m \033[3m{main_script}\033[0m")
         sys.exit(1)
 
-    print("[bold blue]Ejecutando Fase 1 desde el directorio temporal...[/bold blue]")
+    print("\033[1m\033[94mEjecutando Fase 1 desde el directorio temporal...\033[0m")
     try:
         # Agregar el directorio raíz del proyecto al PYTHONPATH
         env = dict(PYTHONPATH=str(project_root), **os.environ)
         run([sys.executable, str(main_script)], check=True, env=env)
-        print("[bold green]Fase 1 ejecutada correctamente.[/bold green]")
+        print("\033[1m\033[92mFase 1 ejecutada correctamente.\033[0m")
     except FileNotFoundError:
-        print("[bold red]El ejecutable de Python no se encontró.[/bold red]")
+        print("\033[1m\033[91mEl ejecutable de Python no se encontró.\033[0m")
         sys.exit(1)
     except CalledProcessError as e:
-        print("[bold red]Error durante la ejecución de Fase 1:[/bold red]", style="red")
+        print(
+            "\033[1m\033[91mError durante la ejecución de Fase 1:\033[0m",
+        )
         print(e)
         sys.exit(1)
     except Exception as e:
-        print("[bold red]Error inesperado al ejecutar Fase 1:[/bold red]", style="red")
+        print(
+            "\033[1m\033[91mError inesperado al ejecutar Fase 1:\033[0m",
+        )
         print(e)
         sys.exit(1)
 
@@ -134,31 +119,31 @@ def execute_phase1(temp_dir: Path) -> None:
 if __name__ == "__main__":
     # Simular la consola de rich con prints formateados (muy básico)
     class SimpleConsole:
-        def print(self, text, style=None):
+        def print(self, text):
             if "[bold" in text:
                 text = text.replace("[bold", "\033[1m")
             if "[/bold]" in text:
                 text = text.replace("[/bold]", "\033[0m")
             if "[blue]" in text:
                 text = text.replace("[blue]", "\033[94m")
+            if "[/blue]" in text:
+                text = text.replace("[/blue]", "\033[0m")
             if "[green]" in text:
                 text = text.replace("[green]", "\033[92m")
+            if "[/green]" in text:
+                text = text.replace("[/green]", "\033[0m")
             if "[red]" in text:
                 text = text.replace("[red]", "\033[91m")
+            if "[/red]" in text:
+                text = text.replace("[/red]", "\033[0m")
             if "[yellow]" in text:
                 text = text.replace("[yellow]", "\033[93m")
+            if "[/yellow]" in text:
+                text = text.replace("[/yellow]", "\033[0m")
             if "[italic]" in text:
                 text = text.replace("[italic]", "\033[3m")
             if "[/italic]" in text:
                 text = text.replace("[/italic]", "\033[0m")
-            if "[/blue]" in text:
-                text = text.replace("[/blue]", "\033[0m")
-            if "[/green]" in text:
-                text = text.replace("[/green]", "\033[0m")
-            if "[/red]" in text:
-                text = text.replace("[/red]", "\033[0m")
-            if "[/yellow]" in text:
-                text = text.replace("[/yellow]", "\033[0m")
             print(text)
 
     console = SimpleConsole()
