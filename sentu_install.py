@@ -17,6 +17,7 @@ DEFAULT_REPO_URL = "https://github.com/elepistemedev/dotfiles/archive/refs/heads
 
 RYE_INSTALL_URL = "https://rye.astral.sh/get"
 RYE_EXECUTABLE = "rye"
+REPO_NAME = "dotfiles-feature-better_man"
 
 
 def is_rye_installed() -> bool:
@@ -85,8 +86,8 @@ def download_and_extract(repo_url: str, temp_dir: Path) -> Path:
 
 def execute_phase1(temp_dir: Path) -> None:
     """Ejecuta el script de la primera fase desde el directorio temporal."""
-    main_script = temp_dir / "dotfiles-dev" / "phase1" / "main.py"
-    project_root = temp_dir / "dotfiles-dev"
+    main_script = temp_dir / REPO_NAME / "phase1" / "main.py"
+    project_root = temp_dir / REPO_NAME
 
     print(f"\033[1m\033[94mBuscando archivo main.py en:\033[0m \033[3m{main_script}\033[0m")
     if not main_script.exists():
