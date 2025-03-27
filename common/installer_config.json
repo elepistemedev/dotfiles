@@ -35,8 +35,8 @@
               "perl",
               "elfutils-libelf-devel"
             ],
-            "extended": ["lazygit"],
-            "rye": ["python3-devel", "gcc"]
+            "extended": ["lazygit"]
+            ,"rye": ["python3-devel", "gcc"]
           },
           "repositories": {
             "rpmfusion-nonfree": [
@@ -90,9 +90,9 @@
               "software-properties-common",
               "gnupg"
             ],
-            "extended": ["lazygit"],
-            "rye": ["python3-dev", "build-essential"]
-          }
+            "extended": ["lazygit"]
+            ,"rye": ["python3-dev", "build-essential"]
+          }          
         },
         "debian": {
           "manager": "apt",
@@ -114,9 +114,9 @@
               "software-properties-common",
               "gnupg"
             ],
-            "extended": ["lazygit"],
-            "rye": ["python3-dev", "build-essential"]
-          }
+            "extended": ["lazygit"]
+            ,"rye": ["python3-dev", "build-essential"]
+          }          
         },
         "arch": {
           "manager": "pacman",
@@ -134,9 +134,9 @@
               "openjdk",
               "base-devel"
             ],
-            "extended": ["lazygit"],
-            "rye": ["python-devel", "gcc"]
-          }
+            "extended": ["lazygit"]
+            ,"rye": ["python-devel", "gcc"]
+          }          
         },
         "manjaro": {
           "manager": "pacman",
@@ -154,10 +154,13 @@
               "openjdk",
               "base-devel"
             ],
-            "extended": ["lazygit"],
-            "rye": ["python-devel", "gcc"]
+            "extended": ["lazygit"]
           }
         }
+      },
+      "rye": ["python3-devel", "gcc"],
+      "ubuntu": {
+        "rye": ["python3-dev", "build-essential"]
       },
       "darwin": {}
     },
@@ -188,8 +191,8 @@
       { "task": "install_and_configure_zsh" },
       { "task": "clone_repo" },
       { "task": "install_uv" },
+      { "task": "install_rye" },
       { "task": "install_python_packages" },
-      { "task": "install_prompt" },
       { "task": "install_flatpak" },
       { "task": "install_fonts" }
     ],
@@ -212,90 +215,80 @@
     "steps": [
       { "task": "update_system" },
       { "task": "install_dependencies", "group": "extended" },
-      { "task": "install_lazyvim" },
-      { "task": "install_luapack" },
       { "task": "configurar_docker" },
       { "task": "install_post_install" },
       { "task": "install_dotfiles" }
-    ],
-    "install_lazyvim": {
-      "command": "git clone --depth=1 https://github.com/LazyVim/LazyVim.git ~/.config/nvim && nvim -u ~/.config/nvim/init.lua",
-      "description": "Clonando e inicializando LazyVim"
-    },
-    "install_luapack": {
-      "command": "git clone https://github.com/LunarVim/luapack ~/.local/share/lunarvim/luapack",
-      "description": "Clonando luapack"
-    },
-    "configurar_docker": {
-      "fedora": [
-        {
-          "command": ["sudo", "systemctl", "start", "docker"],
-          "description": "Iniciando el servicio de Docker"
-        },
-        {
-          "command": ["sudo", "systemctl", "enable", "docker.service"],
-          "description": "Habilitando Docker al inicio"
-        },
-        {
-          "command": ["sudo", "usermod", -1, "-G", "docker", "$USER"],
-          "description": "Añadiendo el usuario al grupo docker (puede requerir reiniciar sesión)"
-        }
-      ],
-      "ubuntu": [
-        {
-          "command": ["sudo", "systemctl", "start", "docker"],
-          "description": "Iniciando el servicio de Docker"
-        },
-        {
-          "command": ["sudo", "systemctl", "enable", "docker.service"],
-          "description": "Habilitando Docker al inicio"
-        },
-        {
-          "command": ["sudo", "usermod", -1, "-G", "docker", "$USER"],
-          "description": "Añadiendo el usuario al grupo docker (puede requerir reiniciar sesión)"
-        }
-      ]
-    },
-    "install_post_install_commands": [
+    ]
+  },
+  "configurar_docker": {
+    "fedora": [
       {
-        "command": "curl -s https://ohmyposh.dev/install.sh | bash -s -- -d ~/bin",
-        "description": "Instalando Oh My Posh"
+        "command": ["sudo", "systemctl", "start", "docker"],
+        "description": "Iniciando el servicio de Docker"
       },
       {
-        "command": "go install oss.terrastruct.com/d2@latest",
-        "description": "Instalando d2 diagram"
+        "command": ["sudo", "systemctl", "enable", "docker.service"],
+        "description": "Habilitando Docker al inicio"
       },
       {
-        "command": "curl -fsS https://dl.brave.com/install.sh | sh",
-        "description": "Instalando Brave"
-      },
-      {
-        "command": "git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm",
-        "description": "Configurando tmux plugin manager"
-      },
-      {
-        "command": "tmux source ~/.tmux.conf",
-        "description": "Activando tmux"
-      },
-      {
-        "command": "gem install tmuxinator",
-        "description": "Instalando tmuxinator"
-      },
-      {
-        "command": "flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo",
-        "description": "Actualizando repo Flatpak"
-      },
-      {
-        "command": "flatpak install flathub md.obsidian.Obsidian -y",
-        "description": "Instalando Obsidian"
-      },
-      {
-        "command": "flatpak install flathub org.freedownloadmanager.Manager -y",
-        "description": "Instalando FDM"
+        "command": ["sudo", "usermod", -1, "-G", "docker", "$USER"],
+        "description": "Añadiendo el usuario al grupo docker (puede requerir reiniciar sesión)"
       }
     ],
-    "install_dotfiles": {
-      "description": "La instalación de dotfiles se maneja en el script install_dot.py"
+    "ubuntu": [
+      {
+        "command": ["sudo", "systemctl", "start", "docker"],
+        "description": "Iniciando el servicio de Docker"
+      },
+      {
+        "command": ["sudo", "systemctl", "enable", "docker.service"],
+        "description": "Habilitando Docker al inicio"
+      },
+      {
+        "command": ["sudo", "usermod", -1, "-G", "docker", "$USER"],
+        "description": "Añadiendo el usuario al grupo docker (puede requerir reiniciar sesión)"
+      }
+    ]
+  },
+  "install_post_install_commands": [
+    {
+      "command": "curl -s https://ohmyposh.dev/install.sh | bash -s -- -d ~/bin",
+      "description": "Instalando Oh My Posh"
+    },
+    {
+      "command": "go install oss.terrastruct.com/d2@latest",
+      "description": "Instalando d2 diagram"
+    },
+    {
+      "command": "curl -fsS https://dl.brave.com/install.sh | sh",
+      "description": "Instalando Brave"
+    },
+    {
+      "command": "git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm",
+      "description": "Configurando tmux plugin manager"
+    },
+    {
+      "command": "tmux source ~/.tmux.conf",
+      "description": "Activando tmux"
+    },
+    {
+      "command": "gem install tmuxinator",
+      "description": "Instalando tmuxinator"
+    },
+    {
+      "command": "flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo",
+      "description": "Actualizando repo Flatpak"
+    },
+    {
+      "command": "flatpak install flathub md.obsidian.Obsidian -y",
+      "description": "Instalando Obsidian"
+    },
+    {
+      "command": "flatpak install flathub org.freedownloadmanager.Manager -y",
+      "description": "Instalando FDM"
     }
+  ],
+  "install_dotfiles": {
+    "description": "La instalación de dotfiles se maneja en el script install_dot.py"
   }
 }

@@ -1,12 +1,75 @@
 import os
 import subprocess
 
+from common.system_info import SystemInfo
 from common.install_packages import install_packages
 from common.system_info import SystemInfo  # Asegúrate de que esta importación esté aquí
-
 from .logger_utils import setup_logger
 
 logging = setup_logger()
+
+
+def run_step(step, system_info, config):
+    """
+    Ejecuta un paso específico de la instalación.
+    """
+    task = step.get("task")
+    if task == "update_system":
+        return update_system(system_info)
+    elif task == "install_dependencies":
+        group = step.get("group")
+        return install_dependencies(system_info, group)
+    elif task == "install_and_configure_zsh":
+        return install_and_configure_zsh(system_info)
+    elif task == "clone_repo":
+        return clone_repo()
+    elif task == "install_uv":
+        return install_uv(config)
+    elif task == "install_rye":
+        #TODO: Implementar la funcion install_rye
+        return install_rye(config)
+    elif task == "install_python_packages":
+        return install_python_packages(config, system_info)
+        return True
+    elif task == "install_fonts":
+        return install_fonts(config)
+    elif task == "configurar_docker":
+        return configurar_docker(config)
+    elif task == "install_post_install":
+        return install_post_install(config)
+    elif task == "install_dotfiles":
+        return install_dotfiles()
+    else:
+        logging.error(f"Tarea desconocida: {task}")
+        return False
+
+
+
+
+def clone_repo():
+    """Clona el repositorio git."""
+    repo_url = "https://github.com/MatiasP-dev/sentu-install"
+    repo_path = os.path.expanduser("~/Repos/sentu-install")
+    
+    if os.path.exists(repo_path):
+        logging.info(f"El repositorio ya existe en {repo_path}")
+        return True
+
+    logging.info(f"Clonando repositorio: {repo_url} en {repo_path}")
+    try:
+        subprocess.run(["git", "clone", repo_url, repo_path], check=True)
+        os.chdir(repo_path)  # Mover al directorio recién creado
+        logging.info(f"Repositorio clonado correctamente en {repo_path}")
+        return True
+    except subprocess.CalledProcessError as e:
+        logging.error(f"Error al clonar el repositorio: {e}")
+        return False
+    except Exception as e:
+        logging.error(f"Error inesperado: {e}")
+        return False
+
+
+
 
 
 # 2. Actualizar sistema
@@ -64,23 +127,28 @@ def update_system(system_info, use_repo=False):
 
 
 # 3. Instalar dependencias básicas
-def install_dependencies(system_info, use_extended=False):
-    """Instala las dependencias necesarias según el sistema operativo"""
-    dependencies = system_info.dependencies_core
-    dependency_type = "core"
-    if use_extended:
-        dependencies = system_info.dependencies_extended
-        dependency_type = "extended"
+def install_dependencies(system_info, group):
+    """
+    Instala las dependencias necesarias según el sistema operativo y el grupo especificado.
+    """
+    dependency_type = group
+    if group not in ["core", "extended"]:
+      logging.error(f"Grupo de dependencias desconocido: {group}")
+      return False
 
+    dependencies = system_info.dependencies_core  # Por defecto, usa las dependencias "core"
+    if group == "extended":
+      dependencies = system_info.dependencies_extended
+    
     if not system_info.install_command:
         logging.error("No se pudo determinar el comando de instalación")
         return False
-
+    
     if not dependencies:
         logging.info(f"No se encontraron dependencias {dependency_type} para instalar.")
         return True
 
-    try:
+    try:  
         install_command = system_info.install_command + dependencies
         logging.info(f"Instalando dependencias {dependency_type}: {' '.join(install_command)}")
         result = subprocess.run(install_command, text=True, input="y\n", check=True, shell=True)
@@ -143,6 +211,39 @@ def install_and_configure_zsh(system_info):
     except Exception as e:
         logging.error(f"Error inesperado al instalar o configurar zsh: {e}")
         return False
+
+
+
+def install_python_packages(config, system_info):
+    """Instala paquetes Python usando rye."""
+    dependencies_python = config.get("sentu_install", {}).get("package_managers", {}).get("linux",{}).get(system_info.distribution,{}).get("dependencies_python")
+
+    if not dependencies_python:
+        logging.info(f"No se encontraron dependencias Python para instalar.")
+        return True
+    
+    try:
+        if system_info.package_manager == "pacman":
+            install_command = system_info.install_command + dependencies_python
+            logging.info(f"Instalando dependencias Python con pacman: {' '.join(install_command)}")
+            result = subprocess.run(install_command, text=True, input="y\n", check=True, shell=True)
+        for dependency in dependencies_python:
+          rye_add_command = ["rye", "add", dependency]
+          logging.info(f"Instalando dependencias Python con rye: {rye_add_command}")
+          result = subprocess.run(rye_add_command, text=True, input="y\n", check=True, shell=True)
+          if result.returncode == 0:
+              logging.info(f"Dependencia Python {dependency} instalada correctamente")
+          else:
+              logging.error(f"Error al instalar la dependencia Python {dependency}: {result.stderr}")
+              return False
+        return True
+    except subprocess.CalledProcessError as e:
+        logging.error(f"Error al ejecutar el comando de instalación de dependencias Python: {e}")
+        return False
+    except Exception as e:
+        logging.error(f"Error inesperado al instalar dependencias Python: {e}")
+        return False
+
 
 
 def configurar_docker(config):
@@ -234,3 +335,27 @@ def install_fonts(config):
         "Fuentes instaladas correctamente. Puede que necesites reiniciar tu terminal.",
         "Error al instalar las fuentes.",
     )
+
+
+def install_rye(config):
+    """Instala rye usando el comando de configuración."""
+    return install_from_config(
+        config, "sentu_install", "rye", "Instalando rye...", "Rye instalado correctamente.", "Error al instalar rye."
+    )
+
+
+
+def install_dotfiles(config):
+    """Instala las dotfiles desde la configuración."""
+    logger = setup_logger()
+    command = config.get("phase_2", {}).get("install_dotfiles", {}).get("command")
+    description = config.get("phase_2", {}).get("install_dotfiles", {}).get("description")
+    
+    if not command or not description:
+        logger.error("No se encontró comando o descripción para install_dotfiles en la configuración.")
+        return False
+    
+    return install_packages(
+        [(command, description)], "Instalando dotfiles...", "dotfiles instalados correctamente.", "Error al instalar dotfiles"
+    )
+

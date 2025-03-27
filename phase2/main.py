@@ -1,17 +1,14 @@
+import json
 from InquirerPy import inquirer
 from common.logo import show as logo
 from common.system_info import SystemInfo
 from common.system_operations import (
-    update_system,
-    install_dependencies,
-    install_lazyvim,
-    configurar_docker,
-    install_luapack,
-    install_post_install,
+    run_step,
+    read_file
 )
 from InquirerPy.utils import color_print
 from common.install_dotfiles import install_dot
-
+from common.logger_utils import setup_logger
 
 def fase2():
     # 1. Detectar sistema operativo
@@ -28,64 +25,21 @@ def fase2():
             ]
         )
         color_print([("yellow", f"Gestor de paquetes: {system_info.package_manager}")])
+    
+    logger = setup_logger()
+    # Cargar la configuración del instalador
+    config_path = "common/installer_config.json"
+    config_data = json.loads(read_file(config_path))
 
-    # 2. Actualizar sistema
-    color_print([("cyan", "⚡ Actualizando sistema...")])
-    if not update_system(system_info, use_repo=True):
-        color_print([("red", "❌ No se pudo actualizar el sistema")])
-        return
-    color_print([("green", "✓ Sistema actualizado correctamente")])
+    # Obtener los pasos de la fase 2
+    phase_2_steps = config_data.get("phase_2", {}).get("steps", [])
 
-    # 3. Instalar dependencias básicas
-    color_print([("cyan", "⚡ Instalando dependencias básicas...")])
-    if not install_dependencies(system_info, use_extended=True):
-        color_print([("red", "❌ No se pudieron instalar las dependencias")])
-        return
-    color_print([("green", "✓ Dependencias instaladas correctamente")])
-
-    # 4. Instalar Lazyvim
-    color_print([("cyan", "⚡ Instalando Lazyvim...")])
-    if not install_lazyvim():
-        color_print([("red", "❌ No se pudo instalar Lazyvim")])
-        return
-    color_print([("green", "✓ Lazyvim instalado correctamente")])
-
-    # 5. Instalando paquetes para Lua
-    color_print([("cyan", "⚡ Instalando paquetes Lua...")])
-    if not install_luapack():
-        color_print([("red", "❌ No se pudo instalar paquetes para Lua")])
-        return
-    color_print([("green", "✓ Paquetes Lua instalados correctamente")])
-
-    # 6. Configurar Docker
-    color_print([("cyan", "⚡ Configurando Docker...")])
-    if not configurar_docker():
-        color_print([("red", "❌ No se pudo configurar Docker")])
-    color_print([("green", "✓ Docker configurado correctamente")])
-
-    # 8. Instalar post-instalaciones
-    color_print([("cyan", "⚡ Ejecutando post-instalaciones...")])
-    if not install_post_install():
-        color_print([("red", "❌ No se pudo ejecutar las post-instalaciones")])
-    color_print([("green", "✓ Las post-instalaciones se ejecutaron correctamente")])
-
-    # 99. Instalar dotfiles
-    color_print([("cyan", "⚡ Instalando dotfiles...")])
-    if not install_dot():
-        color_print([("red", "❌ No se pudo instalar dotfiles")])
-        return
-    color_print([("green", "✓ dotfiles instalados correctamente")])
-
-    # Mensaje final de éxito
-    color_print(
-        [
-            (
-                "green",
-                "✨ Todas las instalaciones y configuraciones se completaron con éxito!",
-            )
-        ]
-    )
-
+    # Ejecutar cada paso
+    for step in phase_2_steps:
+        if not run_step(step, system_info, config_data):
+            logger.error(f"Error al ejecutar el paso: {step.get('task')}")
+            return
+        
     logo("🎉 Fase 2 completada exitosamente")
 
 
