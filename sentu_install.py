@@ -97,14 +97,15 @@ def execute_phase1() -> None:
     home_path = Path.home()
     final_folder_name = FINAL_FOLDER_NAME
     dotfiles_path = home_path / final_folder_name
-    if not dotfiles_path.exists():
-        dotfiles_path.mkdir(parents=True, exist_ok=True)    
+    if dotfiles_path.exists():
+      for item in dotfiles_path.iterdir():
+          if item.is_file():
+              item.unlink()
+          elif item.is_dir():
+              shutil.rmtree(item)
     else:
-        for item in dotfiles_path.iterdir():
-            if item.is_file():                
-                item.unlink()  
-            elif item.is_dir():
-                shutil.rmtree(item)
+      dotfiles_path.mkdir(parents=True, exist_ok=True)
+
     main_script = dotfiles_path / "phase1" / "main.py"
     project_root = dotfiles_path
     
@@ -160,18 +161,13 @@ if __name__ == "__main__":
     destination_path = home_path / final_folder_name
 
     logging.info(f"extracted_path_temp: {extracted_path_temp}")
-    if not destination_path.exists():
-        destination_path.mkdir(parents=True, exist_ok=True)
-
+    
     # Mover el contenido a la carpeta destino
-    for item in extracted_path_temp.iterdir():        
-        if (destination_path).exists():
-            logging.info(f"Moviendo: {item} a {destination_path}")
-            shutil.move(str(item),str(destination_path))
-        else:
-            destination_path.mkdir(parents=True, exist_ok=True)
-            logging.info(f"Moviendo: {item} a {destination_path}")
-            shutil.move(str(item),str(destination_path))
+    for item in extracted_path_temp.iterdir():
+        logging.info(f"Moviendo: {item} a {destination_path}")
+        shutil.move(str(item),str(destination_path))
+        
+    os.remove(temp_dir_direct/"repo.zip")
 
 
     logging.info(f"extracted_path_temp: {extracted_path_temp}")
